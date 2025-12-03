@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.greetingsapp.mobile"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.greetingsapp.mobile"
@@ -45,6 +45,8 @@ dependencies {
 
     // Coil (Para cargar las imágenes en el Adapter más adelante)
     implementation("io.coil-kt:coil:2.6.0")
+    // para las corrutinas
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -10,13 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.greetingsapp.mobile.adapter.ImagesAdapter
 import com.greetingsapp.mobile.adapter.ThemesAdapter
 import com.greetingsapp.mobile.databinding.ActivityMainBinding
-import com.greetingsapp.mobile.model.ThemeModel
 import com.greetingsapp.mobile.network.RetrofitClient
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,15 +42,15 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerViews() {
         // --- Configuración de Temáticas (Lista Horizontal) ---
         // Le pasamos la función lambda: qué hacer cuando tocan un tema
-        themesAdapter = ThemesAdapter {
-            selectedTheme ->
+        themesAdapter = ThemesAdapter { selectedTheme ->
             // Acción: Mostrar mensaje y cargar imágenes de ese tema
             Toast.makeText(this, "Cargando: ${selectedTheme.themeName}", Toast.LENGTH_SHORT).show()
             loadImages(selectedTheme.themeId)
         }
 
         binding.recyclerViewThemes.apply { // apply es una scope function, Aplica las siguientes configuraciones a este objeto
-            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager =
+                LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = themesAdapter
         }
 
@@ -84,7 +79,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else {
                     Log.e("API_ERROR", "Error: ${response.code()}")
-                    Toast.makeText(this@MainActivity, "Error al cargar temas", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Error al cargar temas", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } catch (e: Exception) {
                 // Capturamos errores de red (sin internet, servidor caído)
@@ -95,8 +91,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadImages(themeId: Long) {
-        // TODO: Implementar la carga de imágenes en el siguiente paso
-        // Aquí llamaremos a RetrofitClient.instance.getImagesByTheme(...)
-        Log.d("APP", "Debería cargar imágenes del tema $themeId")
+        lifecycleScope.launch {
+            try {
+                val responseApi = RetrofitClient.instance.getImagesByTheme(themeId)
+
+                if (responseApi.isSuccessful) {
+                    // 1. Se obtiene el objeto "Page" completo
+                    val pageResponse = responseApi.body()
+
+                    // 2. Se saca la lista que está ADENTRO de la página (en el campo 'content')
+                    // El operador ?. sirve por si pageResponse es nulo
+                    // El operador ?: sirve para usar una lista vacía si todo falla
+                    val imagesList = pageResponse?.content ?: emptyList()
+
+                    // 3. Se la entregas al adaptador
+                    imagesAdapter.submitList(imagesList)
+
+                    Log.d("APP", "Cargadas ${imagesList.size} imágenes")
+                } else {
+                    Log.e("API_ERROR", "Error del servidor: ${responseApi.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("API_ERROR", "Fallo al conectar: ${e.message}")
+            }
+        }
     }
 }

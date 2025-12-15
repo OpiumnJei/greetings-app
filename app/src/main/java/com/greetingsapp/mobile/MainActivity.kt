@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.greetingsapp.mobile.adapter.ImagesAdapter
 import com.greetingsapp.mobile.adapter.ThemesAdapter
 import com.greetingsapp.mobile.databinding.ActivityMainBinding
+import com.greetingsapp.mobile.model.ThemeModel
 import com.greetingsapp.mobile.network.RetrofitClient
 import kotlinx.coroutines.launch
 
@@ -34,9 +35,18 @@ class MainActivity : AppCompatActivity() {
         // 2. Configurar los RecyclerViews
         setupRecyclerViews()
 
-        // 3. Cargar datos iniciales
+        //  Cargar datos iniciales
         // Por defecto, cargamos la categoría 1 ("Buenos Días") al iniciar
-        loadThemes(categoryId = 2)
+        // loadThemes(categoryId = 2)
+
+        // 3. Configurar los botones
+        setupNavigation()
+
+        // 4. Carga inicial:
+        // Truco: Simular un clic automático en "Buenos Días" al abrir la app
+        // Esto cargará los temas de la categoría 1 automáticamente
+        binding.bottomNavigation.selectedItemId = R.id.nav_buenos_dias
+
     }
 
     private fun setupRecyclerViews() {
@@ -44,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         // Le pasamos la función lambda: qué hacer cuando tocan un tema
         themesAdapter = ThemesAdapter { selectedTheme ->
             // Acción: Mostrar mensaje y cargar imágenes de ese tema
-            Toast.makeText(this, "Cargando: ${selectedTheme.themeName}", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Cargando: ${selectedTheme.themeName}", Toast.LENGTH_SHORT).show()
             loadImages(selectedTheme.themeId)
         }
 
@@ -113,6 +123,88 @@ class MainActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Fallo al conectar: ${e.message}")
+            }
+        }
+    }
+
+    private fun setupNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            // cuando se selecciona un item de nuestro btmNavigation, se comparan usando el when, y en funcion del item
+            // identificado se ejecuta X o Y bloque de codigo
+            when (item.itemId) { //id del item seleccionado
+                R.id.nav_inicio -> { //item.itemId == id.nav_inicio
+                    // Limpiamos visualmente antes de cargar
+                    themesAdapter.submitList(emptyList())
+                    imagesAdapter.submitList(emptyList())
+                    loadHomeContent() // <--- ¡AQUÍ ESTÁ LA MAGIA!
+                    true
+                }
+
+                R.id.nav_buenos_dias -> {
+                    // ESTE ES EL IMPORTANTE AHORA
+                    // Al tocar el sol, cargamos la Categoría 1 (Buenos Días)
+                    // y limpiamos las imágenes viejas para que se vea el cambio
+                    imagesAdapter.submitList(emptyList())
+                    loadThemes(categoryId = 1)
+                    true
+                }
+
+                R.id.nav_festividades -> {
+                    // Asumiremos que la Categoría 3 es "Festividades" en tu BD
+                    imagesAdapter.submitList(emptyList())
+                    loadThemes(categoryId = 3)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    // Metodo que carga la configuración de la pantalla "Inicio"
+    private fun loadHomeContent() {
+        // 1. Cargar Chips: Esta vez pedimos las Categorías Generales
+        loadCategoriesAsChips()
+
+        // 2. Cargar Imágenes: Pedimos las "Novedades"
+        loadRecentImages()
+    }
+
+    // metodo que carga las cagetorias generales en los chips de la pantalla de inicio
+    private fun loadCategoriesAsChips() {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.instance.getCategories()
+                if (response.isSuccessful) {
+                    val categories = response.body() ?: emptyList()
+
+                    // TRUCO: Convertimos las Categorías a ThemeModel visualmente
+                    // para poder reusar el mismo ThemesAdapter sin crear uno nuevo.
+                    // (Mapeamos id->id, name->name)
+                    val fakeThemes = categories.map { category ->
+                        ThemeModel(
+                            themeId = category.categoryId,
+                            themeName = category.categoryName
+                        )
+                    }
+                    themesAdapter.submitList(fakeThemes)
+                }
+            } catch (e: Exception) {
+                Log.e("API", "Error cargando categorías: ${e.message}")
+            }
+        }
+    }
+
+    // metodo que muestra las ultimas imagenes cargadas a la api
+    private fun loadRecentImages() {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.instance.getAllImages() // El método nuevo
+                if (response.isSuccessful) {
+                    val images = response.body()?.content ?: emptyList()
+                    imagesAdapter.submitList(images)
+                }
+            } catch (e: Exception) {
+                Log.e("API", "Error cargando novedades: ${e.message}")
             }
         }
     }

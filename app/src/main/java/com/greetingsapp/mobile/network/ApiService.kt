@@ -29,4 +29,14 @@ interface ApiService {
         @Query("size") size: Int = 10 // 10 fotos por página
     ): Response<PageResponse<ImageModel>>
     // Fíjate que devolvemos PageResponse, no List directa, porque tu API devuelve una página
+
+    // 4. Traer TODAS las imágenes (para la pantalla de Inicio/Novedades)
+    // Asumimos que tu backend tiene un endpoint /api/images que soporta paginación
+    @GET("/api/images")
+    suspend fun getAllImages(
+        @Query("page") page: Int = 0,
+        @Query("size") size: Int = 20, // Traemos más para llenar la pantalla
+        @Query("sort") sort: String = "created,desc" // Truco: Pedir las más nuevas primero
+    ): Response<PageResponse<ImageModel>>
+
 }

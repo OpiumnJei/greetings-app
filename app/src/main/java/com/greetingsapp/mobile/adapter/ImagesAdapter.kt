@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.greetingsapp.mobile.databinding.ItemImageBinding
 import com.greetingsapp.mobile.model.ImageModel
 
-class ImagesAdapter : ListAdapter<ImageModel, ImageViewHolder>(DiffCallback) {
+class ImagesAdapter(private val onImageSelected: (ImageModel) -> Unit) : ListAdapter<ImageModel, ImageViewHolder>(DiffCallback) {
 
 
     // Crea la "cascara" visual (el ViewHolder) inflando el XML
@@ -20,7 +20,7 @@ class ImagesAdapter : ListAdapter<ImageModel, ImageViewHolder>(DiffCallback) {
     // Rellena la cáscara con los datos de una posición específica
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val image = getItem(position)
-        holder.bind(image)
+        holder.bind(image, onImageSelected)
     }
 
     // Esto ayuda al adaptador a saber qué cambió en la lista para actualizar solo lo necesario (eficiencia pura)

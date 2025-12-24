@@ -1,5 +1,6 @@
 package com.greetingsapp.mobile
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         // Le pasamos la función lambda: qué hacer cuando tocan un tema
         themesAdapter = ThemesAdapter { selectedTheme ->
             // Acción: Mostrar mensaje y cargar imágenes de ese tema
-//            Toast.makeText(this, "Cargando: ${selectedTheme.themeName}", Toast.LENGTH_SHORT).show()
+            // oast.makeText(this, "Cargando: ${selectedTheme.themeName}", Toast.LENGTH_SHORT).show()
             loadImages(selectedTheme.themeId)
         }
 
@@ -65,7 +66,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         // --- Configuración de Imágenes (Grilla Vertical) ---
-        imagesAdapter = ImagesAdapter()
+        imagesAdapter = ImagesAdapter {
+            selectedImage -> //lo que ejecuta la lambda
+
+                // Esta es la acción común para TODAS las secciones
+                val intent = Intent(this, ImageDetailActivity::class.java)
+
+                // Pasamos la URL de la imagen a la otra pantalla
+                intent.putExtra("EXTRA_IMAGE_URL", selectedImage.imageUrl)
+
+                startActivity(intent)
+        }
+
         binding.recyclerViewImages.apply {
             layoutManager = GridLayoutManager(this@MainActivity, 2) // 2 Columnas
             adapter = imagesAdapter
@@ -155,6 +167,7 @@ class MainActivity : AppCompatActivity() {
                     loadThemes(categoryId = 3)
                     true
                 }
+
                 else -> false
             }
         }

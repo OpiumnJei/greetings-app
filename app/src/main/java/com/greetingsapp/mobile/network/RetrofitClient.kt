@@ -6,10 +6,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 // Objeto singleton para centralizar la configuración y creación del cliente Retrofit.
 object RetrofitClient {
 
-    // TRUCO: "10.0.2.2" es la dirección mágica que usa el Emulador de Android
-    // para referirse a tu "localhost" de la computadora.
-    // Si pones "localhost", el emulador se buscaría a sí mismo y fallaría.
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    // cambiamos el localhost, por la IP de la PC, el objetivo es no tener que depender de abd reverse, y hacerlo
+    // T0do de forma inalambrica
+    //ip pc: 192.168.0.104
+    private const val BASE_URL = "http://192.168.0.104:8080/"
 
     val instance: ApiService by lazy {
         Retrofit.Builder()

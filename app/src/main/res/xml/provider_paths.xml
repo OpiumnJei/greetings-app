@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path name="shared_images" path="." />
+</paths>
+    <!--Este archivo define qué carpetas estamos dispuestos a exponer al mundo
+    exterior(para que otra app accesa a ella por ejemplo(whatssap)).
+    Si no esta especificado a aqui es una carpeta inaccesible.
+    XML-->

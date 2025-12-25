@@ -1,10 +1,9 @@
-package com.greetingsapp.mobile.network
+package com.greetingsapp.mobile.data.network
 
-import com.greetingsapp.mobile.model.CategoryModel
-import com.greetingsapp.mobile.model.ImageModel
-import com.greetingsapp.mobile.model.PageResponse
-import com.greetingsapp.mobile.model.ThemeModel
-import retrofit2.Call
+import com.greetingsapp.mobile.data.model.CategoryModel
+import com.greetingsapp.mobile.data.model.ImageModel
+import com.greetingsapp.mobile.data.model.PageResponse
+import com.greetingsapp.mobile.data.model.ThemeModel
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

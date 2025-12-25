@@ -1,4 +1,4 @@
-package com.greetingsapp.mobile.model
+package com.greetingsapp.mobile.data.model
 
 data class ImageModel(
     val imageId: Long,

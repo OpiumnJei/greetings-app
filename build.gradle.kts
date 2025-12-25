@@ -2,4 +2,8 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
+
+    // --- AGREGA ESTA LÍNEA ---
+    // La versión debe coincidir con tu versión de Kotlin.
+    alias(libs.plugins.ksp) apply false
 }

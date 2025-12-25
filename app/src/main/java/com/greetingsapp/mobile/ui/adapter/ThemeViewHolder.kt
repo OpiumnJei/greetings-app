@@ -1,8 +1,8 @@
-package com.greetingsapp.mobile.adapter
+package com.greetingsapp.mobile.ui.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import com.greetingsapp.mobile.databinding.ItemThemeBinding
-import com.greetingsapp.mobile.model.ThemeModel
+import com.greetingsapp.mobile.data.model.ThemeModel
 
 class ThemeViewHolder(private val binding: ItemThemeBinding) : RecyclerView.ViewHolder(binding.root) {
 

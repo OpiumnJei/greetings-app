@@ -1,12 +1,11 @@
-package com.greetingsapp.mobile.adapter
+package com.greetingsapp.mobile.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.greetingsapp.mobile.databinding.ItemImageBinding
-import com.greetingsapp.mobile.model.ImageModel
+import com.greetingsapp.mobile.data.model.ImageModel
 
 class ImagesAdapter(private val onImageSelected: (ImageModel) -> Unit) : ListAdapter<ImageModel, ImageViewHolder>(DiffCallback) {
 

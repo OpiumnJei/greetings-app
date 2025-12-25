@@ -1,4 +1,4 @@
-package com.greetingsapp.mobile.model
+package com.greetingsapp.mobile.data.model
 
 // Esta clase "envuelve" la lista que manda Spring Boot en su objeto Page
 data class PageResponse<T>(

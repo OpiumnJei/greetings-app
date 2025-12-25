@@ -1,11 +1,11 @@
-package com.greetingsapp.mobile.adapter
+package com.greetingsapp.mobile.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.greetingsapp.mobile.databinding.ItemThemeBinding
-import com.greetingsapp.mobile.model.ThemeModel
+import com.greetingsapp.mobile.data.model.ThemeModel
 
 // Recibimos una función "onThemeSelected" para avisar a la Activity cuando toquen un tema
 class ThemesAdapter(private val onThemeSelected: (ThemeModel) -> Unit)//// funcion lambda que recibe un objeto ThemeModel(representacion de una tematica) y no retorna nada(unit)

@@ -1,10 +1,10 @@
-package com.greetingsapp.mobile.adapter
+package com.greetingsapp.mobile.ui.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.databinding.ItemImageBinding
-import com.greetingsapp.mobile.model.ImageModel
+import com.greetingsapp.mobile.data.model.ImageModel
 
 // Esta clase interna "retiene" las vistas de una tarjeta para no buscarlas todo el tiempo gracias al viewBinding
 class ImageViewHolder(private val binding: ItemImageBinding) :

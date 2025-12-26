@@ -49,6 +49,7 @@ dependencies {
     implementation("io.coil-kt:coil:2.6.0")
     // para las corrutinas
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     // ➕ ROOM DATABASE
     implementation(libs.androidx.room.runtime)

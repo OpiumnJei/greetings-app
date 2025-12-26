@@ -24,6 +24,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var themesAdapter: ThemesAdapter
     private lateinit var imagesAdapter: ImagesAdapter
 
+    // 📍 CAMBIO 1: Variable de Estado para rastrear el contexto
+    // Variable de Estado para rastrear el contexto
+    // Iniciamos en "General" o "Inicio" por defecto.
+    private var currentTrackingCategory: String = "Buenos dias";
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,8 +60,13 @@ class MainActivity : AppCompatActivity() {
         // --- Configuración de Temáticas (Lista Horizontal) ---
         // Le pasamos la función lambda: qué hacer cuando tocan un tema
         themesAdapter = ThemesAdapter { selectedTheme ->
-            // Acción: Mostrar mensaje y cargar imágenes de ese tema
-            // oast.makeText(this, "Cargando: ${selectedTheme.themeName}", Toast.LENGTH_SHORT).show()
+            // 📍 CAMBIO 2: Si el usuario selecciona un tema específico (ej: "Café"),
+            // actualizamos el rastreo a ese nombre específico.
+            currentTrackingCategory = selectedTheme.themeName
+
+            // Debug para que veas en el Logcat qué está pasando
+            Log.d("TRACKING", "Contexto actualizado a Temática: $currentTrackingCategory")
+            // Acción: cargar imágenes de ese tema
             loadImages(selectedTheme.themeId)
         }
 
@@ -74,6 +84,11 @@ class MainActivity : AppCompatActivity() {
 
             // Pasamos la URL de la imagen a la otra pantalla
             intent.putExtra("EXTRA_IMAGE_URL", selectedImage.imageUrl)
+
+            // 📍 CAMBIO 3: Enviamos el valor actual de nuestra variable de rastreo.
+            // Puede ser "Buenos Días" (Categoría) o "Café" (Tema), dependiendo de qué
+            // fue lo último que tocó el usuario.
+            intent.putExtra("EXTRA_CATEGORY_NAME", currentTrackingCategory)
 
             startActivity(intent)
         }
@@ -145,6 +160,9 @@ class MainActivity : AppCompatActivity() {
             // identificado se ejecuta X o Y bloque de codigo
             when (item.itemId) { //id del item seleccionado
                 R.id.nav_inicio -> { //item.itemId == id.nav_inicio
+                    // 📍 CAMBIO 4: Al cambiar de tab, reseteamos al nombre de la Categoría
+                    currentTrackingCategory = "Inicio"
+                    Log.d("TRACKING", "Contexto actualizado a Categoría: Inicio")
                     // Limpiamos visualmente antes de cargar
                     themesAdapter.submitList(emptyList())
                     imagesAdapter.submitList(emptyList())
@@ -153,6 +171,9 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_buenos_dias -> {
+                    //📍 CAMBIO 4: Reseteamos a "Buenos Días"
+                    currentTrackingCategory = "Buenos Días"
+                    Log.d("TRACKING", "Contexto actualizado a Categoría: Buenos Días")
                     // ESTE ES EL IMPORTANTE AHORA
                     // Al tocar el sol, cargamos la Categoría 1 (Buenos Días)
                     // y limpiamos las imágenes viejas para que se vea el cambio
@@ -162,6 +183,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_festividades -> {
+
+                    //📍 CAMBIO 4: Reseteamos a Festividades
+                    currentTrackingCategory = "Festividades"
+                    Log.d("TRACKING", "Contexto actualizado a Categoría: Festividades")
                     // Asumiremos que la Categoría 3 es "Festividades" en tu BD
                     imagesAdapter.submitList(emptyList())
                     loadThemes(categoryId = 3)

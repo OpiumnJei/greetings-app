@@ -1,4 +1,4 @@
-package com.greetingsapp.mobile.network
+package com.greetingsapp.mobile.data.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

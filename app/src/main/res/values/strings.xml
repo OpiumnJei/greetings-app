@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Saludos Diarios</string>
+
+    <string name="desc_imagen_detalle">Imagen detallada del saludo seleccionada</string>
+
+    <string name="desc_btn_favorito">Guardar en favoritos</string>
+    <string name="desc_btn_compartir">Compartir imagen con otras aplicaciones</string>
+
+    <string name="msg_error_cargar_imagen">Error al cargar la imagen</string>
+    <string name="msg_imagen_no_lista">La imagen aún no se ha cargado por completo</string>
+    <string name="msg_preparando_envio">Preparando imagen...</string>
+    <string name="msg_error_procesar">Ocurrió un error al procesar la imagen</string>
+
+    <string name="share_titulo">Compartir imagen...</string>
+    <string name="share_mensaje_extra">¡Mira este saludo! ✨</string>
+
+    <string name="cat_sin_categoria">Sin Categoría</string>
+    <string name="cat_general">General</string>
 </resources>

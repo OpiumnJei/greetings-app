@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_celebration"
         android:title="Festividades" />
 
+  <item
+        android:id="@+id/nav_favoritos"
+        android:icon="@drawable/ic_favorite_border"
+        android:title="Favoritos" />
+
 </menu>

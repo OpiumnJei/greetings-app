@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         // savedInstanceState == null significa: "La app acaba de nacer desde cero".
         // Si NO es null, significa que giraste el celular y Android ya recreó
         // lo que había, así que no debemos cargar el fragmento inicial de nuevo (se duplicaría).
@@ -59,15 +58,6 @@ class MainActivity : AppCompatActivity() {
 
                     val homeFragment = createHomeFragment()
                     homeFragment.setCategoryToLoad(categoryId = 1, categoryName = "Buenos Días")
-                    loadFragment(homeFragment)
-                    true
-                }
-
-                R.id.nav_festividades -> {
-                    Log.d("TRACKING", "Navegación: Festividades")
-
-                    val homeFragment = createHomeFragment()
-                    homeFragment.setCategoryToLoad(categoryId = 3, categoryName = "Festividades")
                     loadFragment(homeFragment)
                     true
                 }

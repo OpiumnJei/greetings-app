@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,6 +48,9 @@ class HomeFragment : Fragment() {
 
         // se configuran los recyclerViews
         setupRecyclerViews()
+
+        // se configura la logica del buscador
+        setupSearchLogic()
 
         //si el valor de pendingCategoryId no es nulo
         if (pendingCategoryId != null) {
@@ -309,13 +313,104 @@ class HomeFragment : Fragment() {
     }
 
     // COMUNICACIÓN: ACTIVITY -> FRAGMENT
-// Este metodo es el "buzón" donde MainActivity deja los mensajes.
+    // Este metodo es el "buzón" donde MainActivity deja los mensajes.
     fun setCategoryToLoad(categoryId: Long, categoryName: String) {
         // Lógica del -1 que arreglamos antes:
         if (categoryId == -1L) {
             pendingCategoryId = null // Borrar pendientes -> Ir a Inicio
         } else {
             pendingCategoryId = categoryId // Guardar pendiente -> Ir a Categoría
+        }
+    }
+
+    // ⭐ NUEVO: Lógica completa del SearchView
+    private fun setupSearchLogic() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            // 1. Se ejecuta cuando el usuario presiona "Enter" o el icono de lupa en el teclado
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (!query.isNullOrEmpty()) {
+                    executeSearch(query) //metodo encargado de hacer la busqueda a la API
+                    binding.searchView.clearFocus() // Ocultar teclado
+                }
+                return true
+            }
+
+            // 2. Se ejecuta cada vez que el usuario escribe una letra
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // si el usuario borra t0do el texto se recargara automaticamente el contenido de home
+                if (newText.isNullOrEmpty()) {
+                    // Si el usuario borra manualmente t0do, podemos recargar el home
+                    // o simplemente esperar
+                    loadHomeContent()
+                }
+                return false
+            }
+        })
+
+        // 3. Detectar cuando cierran el buscador (la X)
+        binding.searchView.setOnCloseListener {
+            loadHomeContent() // Volver al estado inicial
+            false
+        }
+    }
+
+    // ⭐ NUEVO: Ejecuta la búsqueda contra la API
+    private fun executeSearch(query: String) {
+        // Generamos ticket nuevo para invalidar cargas anteriores
+        val navId = navigationId.incrementAndGet()
+        currentNavigationId = navId
+
+        currentTrackingCategory = "Búsqueda: $query"
+        clearAdapters()
+
+        // UI: Ocultamos banner y mostramos loader si tuvieras uno (recomendado)
+        _binding?.let { binding ->
+            binding.specialDayBanner.visibility = View.GONE
+            binding.recyclerViewThemes.visibility =
+                View.GONE // Ocultamos temas durante búsqueda para limpiar UI
+            binding.progressBar.visibility = View.VISIBLE // Asumiendo que tienes una ProgressBar
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // Opción A: Tienes endpoint (Ideal)
+                val response = RetrofitClient.instance.searchImages(query)
+
+                Log.d("HomeFragment", "Buscando: $query en el servidor...")
+
+                if (navId != currentNavigationId) {
+                    return@launch
+                }
+
+                _binding?.progressBar?.visibility = View.GONE //ocultar
+
+                // Si tuvieras respuesta real:
+                if (response.isSuccessful) {
+                    //obtener objeto "Page" completo
+                    val pageResponse = response.body()
+
+                    // 2. Se saca la lista que está ADENTRO de la página (en el campo 'content')
+                    // El operador ?. sirve por si pageResponse es nulo
+                    // El operador ?: sirve para usar una lista vacia si t0do falla
+                    val imagesList = pageResponse?.content ?: emptyList()
+
+                    if (imagesList.isNotEmpty()) {
+                        imagesAdapter.submitList(imagesList)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "No se encontraron resultados para '$query'",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                if (navId != currentNavigationId) return@launch
+                Log.e("HomeFragment", "Error en búsqueda: ${e.message}")
+                _binding?.progressBar?.visibility = View.GONE
+                Toast.makeText(requireContext(), "Error al buscar", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

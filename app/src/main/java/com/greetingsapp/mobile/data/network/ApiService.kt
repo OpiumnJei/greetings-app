@@ -42,4 +42,8 @@ interface ApiService {
     // 5. Trae contenido dinamico en base a la fecha actual para cargarlo en el menu
     @GET("/api/home")
     suspend fun getHomeContent(): Response<HomeContentModel>
+
+    // 6. Trae imagenes que coincidan con la Query
+ @GET("/api/images/search")
+ suspend fun searchImages(@Query("q") query: String): Response<PageResponse<ImageModel>>
 }

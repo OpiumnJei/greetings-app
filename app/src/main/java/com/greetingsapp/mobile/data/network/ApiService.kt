@@ -1,6 +1,7 @@
 package com.greetingsapp.mobile.data.network
 
 import com.greetingsapp.mobile.data.model.CategoryModel
+import com.greetingsapp.mobile.data.model.HomeContentModel
 import com.greetingsapp.mobile.data.model.ImageModel
 import com.greetingsapp.mobile.data.model.PageResponse
 import com.greetingsapp.mobile.data.model.ThemeModel
@@ -38,4 +39,7 @@ interface ApiService {
         @Query("sort") sort: String = "created,desc" // Truco: Pedir las más nuevas primero
     ): Response<PageResponse<ImageModel>>
 
+    // 5. Trae contenido dinamico en base a la fecha actual para cargarlo en el menu
+    @GET("/api/home")
+    suspend fun getHomeContent(): Response<HomeContentModel>
 }

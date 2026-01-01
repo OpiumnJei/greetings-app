@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var themesAdapter: ThemesAdapter
     private lateinit var imagesAdapter: ImagesAdapter
-    private var currentTrackingCategory: String = "Buenos dias"
+    private var currentTrackingCategory: String = "Saludos"
 
     private var pendingCategoryId: Long? = null
     private var pendingCategoryName: String? = null
@@ -101,13 +101,97 @@ class HomeFragment : Fragment() {
         clearAdapters()
         currentTrackingCategory = "Inicio"
 
-        //asegurar que se vea el searhView
-        _binding?.searchView?.visibility = View.VISIBLE
-
         //se lanzan estas dos funciones en un viewLifecycleOwner atado a la vista, no al fragment, ni a activities
         viewLifecycleOwner.lifecycleScope.launch {
-            loadCategoriesAsChips(navId)
-            loadRecentImages(navId)
+            try {
+                // ⭐ NUEVO: Llamada al endpoint inteligente
+                val response = RetrofitClient.instance.getHomeContent()
+
+                if (navId != currentNavigationId) {
+                    Log.d("HomeFragment", "Navegación obsoleta, descartando")
+                    return@launch
+                }
+
+                if (response.isSuccessful) {
+                    val homeContent = response.body()
+
+                    if (homeContent != null) {
+                        Log.d(
+                            "HomeFragment", """
+                            🔍 DEBUG COMPLETO:
+                             - JSON recibido: ${response.body()}
+                             - contentType: '${homeContent.contentType}'
+                             - title: '${homeContent.title}'
+                             - images: ${homeContent.images.size}
+                             - Match SPECIAL_EVENT: ${homeContent.contentType == "SPECIAL_EVENT"}
+                            """.trimIndent()
+                        )
+
+                        // ⭐ Actualizar UI según el tipo de contenido
+                        when (homeContent.contentType) {
+                            "SPECIAL_EVENT" -> {
+                                // 🎉 DÍA ESPECIAL
+                                _binding?.let { binding ->  //?. = si el objeto _binding no es nulo
+                                    // Mostrar banner
+                                    binding.specialDayBanner.visibility = View.VISIBLE
+                                    binding.tvSpecialDayTitle.text = homeContent.title
+
+                                    //  MANTENER visible el SearchView para búsquedas
+                                    binding.searchView.visibility = View.VISIBLE
+                                    // MANTENER visible los chips de categorías para navegación
+                                    binding.recyclerViewThemes.visibility = View.VISIBLE
+                                }
+                                // Cargar las categorías (el usuario puede cambiar si quiere)
+                                loadCategoriesAsChips(navId)
+                                // Mostrar imágenes del evento
+                                imagesAdapter.submitList(homeContent.images)
+                                currentTrackingCategory = homeContent.title
+
+                                Log.d(
+                                    "HomeFragment", """
+                                    🎨 UI actualizada:
+                                    - Banner visible: ${binding.specialDayBanner.visibility == View.VISIBLE}
+                                    - SearchView visible: ${binding.searchView.visibility == View.VISIBLE}
+                                    - Themes visible: ${binding.recyclerViewThemes.visibility == View.VISIBLE}
+                                """.trimIndent()
+                                )
+                            }
+
+
+                            else -> {
+                                // 📅 DÍA NORMAL: Mostrar categorías + últimas imágenes
+                                _binding?.let { binding ->
+                                    // Ocultar banner
+                                    binding.specialDayBanner.visibility = View.GONE
+
+                                    // Mostrar SearchView y chips
+                                    binding.searchView.visibility = View.VISIBLE
+                                    binding.recyclerViewThemes.visibility = View.VISIBLE
+                                }
+
+                                // Cargar categorías como chips
+                                loadCategoriesAsChips(navId)
+                                // Mostrar últimas imágenes
+                                imagesAdapter.submitList(homeContent.images)
+
+                                Log.d(
+                                    "HomeFragment",
+                                    "📅 Contenido normal: ${homeContent.images.size} imágenes"
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Log.e("HomeFragment", "Error: ${response.code()}")
+                    Toast.makeText(requireContext(), "Error al cargar inicio", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "Error al cargar inicio: ${e.message}")
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "Sin conexión", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -122,6 +206,10 @@ class HomeFragment : Fragment() {
 
         clearAdapters()
         currentTrackingCategory = categoryName
+
+        // ⭐ Ocultar banner de día especial cuando navegas a categorías
+        _binding?.specialDayBanner?.visibility = View.GONE
+        _binding?.recyclerViewThemes?.visibility = View.VISIBLE
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -164,6 +252,11 @@ class HomeFragment : Fragment() {
 
     // metodo encargado de cargar las imagenes
     private fun loadImages(themeId: Long, navId: Long = currentNavigationId) {
+        // Cuando el usuario navega manualmente a un tema específico,
+        // asumimos que ya no está interesado en el evento especial del día,
+        // por lo que ocultamos el banner para darle más espacio visual
+        _binding?.specialDayBanner?.visibility = View.GONE
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val responseApi = RetrofitClient.instance.getImagesByTheme(themeId)
@@ -215,28 +308,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // metodo que carga las ultimas imagenes cargadas a la api
-    private suspend fun loadRecentImages(navId: Long) {
-        try {
-            val response = RetrofitClient.instance.getAllImages()
-
-            // ⭐ Verificar antes de actualizar UI
-            if (navId != currentNavigationId) {
-                Log.d("HomeFragment", "Navegación obsoleta (recientes), descartando")
-                return //abandona la funcion directamente
-            }
-
-            if (response.isSuccessful) {
-                val images = response.body()?.content ?: emptyList()
-                imagesAdapter.submitList(images)
-            }
-        } catch (e: Exception) {
-            Log.e("API", "Error cargando novedades: ${e.message}")
-        }
-    }
-
     // COMUNICACIÓN: ACTIVITY -> FRAGMENT
-    // Este metodo es el "buzón" donde MainActivity deja los mensajes.
+// Este metodo es el "buzón" donde MainActivity deja los mensajes.
     fun setCategoryToLoad(categoryId: Long, categoryName: String) {
         // Lógica del -1 que arreglamos antes:
         if (categoryId == -1L) {

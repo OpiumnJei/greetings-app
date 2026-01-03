@@ -70,6 +70,14 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
+                // En setupNavigation(), cambiar nav_festividades por nav_about:
+                R.id.nav_about -> {
+                    Log.d("TRACKING", "Navegación: Acerca de")
+                    val aboutFragment = AboutFragment()
+                    loadFragment(aboutFragment)
+                    true
+                }
+
                 else -> false
             }
         }

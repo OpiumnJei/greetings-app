@@ -4,6 +4,24 @@
     <!-- permiso para usar el internet del celular -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- visibilidad de paquetes para asegurarnos que siempre el sistema
+    nos provea accesibilidad para abrir las apps, ya el sistema podría mentir y
+     decir que no está instalada aunque sí lo esté, por privacidad.
+
+     OJO:
+     se debe agregar manualmente el packageName por cada app referenciada en nuestro codigo.
+     -->
+    <queries>
+        <package android:name="com.instagram.android" />
+        <package android:name="com.twitter.android" />
+        <package android:name="com.linkedin.android" />
+
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -39,5 +57,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
+
 
 </manifest>

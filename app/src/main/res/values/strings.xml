@@ -16,6 +16,53 @@
 
     <string name="cat_sin_categoria">Sin Categoría</string>
     <string name="cat_general">General</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_saludos">Saludos</string>
+    <string name="nav_favoritos">Favoritos</string>
+    <string name="nav_acerca_de">Acerca de</string>
+
+    <string name="home_search_hint">Buscar saludos...</string>
+    <string name="home_special_day_default_title">¡Día Especial!</string>
+    <string name="home_special_day_default_subtitle">Comparte alegría en este día</string>
+    <string name="home_nav_obsoleta">Navegación obsoleta, descartando</string>
+    <string name="home_error_carga">Error al cargar inicio</string>
+    <string name="home_sin_conexion">Sin conexión</string>
+    <string name="home_busqueda_prefix">Búsqueda: %1$s</string> <string name="home_no_resultados">No se encontraron resultados para \'%1$s\'</string>
+
+    <string name="dia_lunes">Feliz Lunes</string>
+    <string name="dia_martes">Feliz Martes</string>
+    <string name="dia_miercoles">Feliz Miércoles</string>
+    <string name="dia_jueves">Feliz Jueves</string>
+    <string name="dia_viernes">Feliz Viernes</string>
+    <string name="dia_finde">Feliz Fin de Semana</string>
+    <string name="dia_buenos_dias">Buenos Días</string>
+
+    <string name="fav_titulo">Mis Favoritos</string>
+    <string name="fav_vacio">Aún no tienes favoritos ❤️</string>
+
+    <string name="about_titulo">Saludos Diarios</string>
+    <string name="about_contacto_titulo">📧 Contacto</string>
+    <string name="about_btn_email">Enviar email</string>
+    <string name="about_btn_reportar">Reportar un problema</string>
+    <string name="about_apoyo_titulo">☕ Apoya el desarrollo</string>
+    <string name="about_btn_cafe">Invítame un café ☕</string>
+    <string name="about_btn_linkedin">LinkedIn</string>
+    <string name="about_legal_titulo">📄 Legal</string>
+    <string name="about_btn_privacidad">Política de privacidad</string>
+    <string name="about_redes_titulo">❤️ Siguenos</string>
+    <string name="about_btn_instagram">Instagram</string>
+    <string name="about_btn_twitter">Twitter</string>
+    <string name="about_footer">Hecho con ❤️ en República Dominicana</string>
+
+    <string name="email_subject_contact">Contacto desde Saludos Diarios</string>
+    <string name="email_subject_bug">🐛 Reporte de Bug - v%1$s</string>
+    <string name="email_chooser_title">Enviar correo</string>
+    <string name="error_no_app">No hay aplicación disponible para esta accion</string>
+    <string name="error_open_app">Error al abrir la aplicacion</string>
+
+    <string name="placeholder_tematica">Nombre Temática</string>
+    <string name="about_version">Versión %1$s</string>
 </resources>

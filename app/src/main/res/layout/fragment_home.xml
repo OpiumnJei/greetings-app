@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="Buscar saludos..." />
+        app:queryHint="@string/home_search_hint" />
 
     <!-- Banner de día especial -->
     <com.google.android.material.card.MaterialCardView
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Comparte alegría en este día especial"
+                android:text="@string/home_special_day_default_subtitle"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
         </LinearLayout>

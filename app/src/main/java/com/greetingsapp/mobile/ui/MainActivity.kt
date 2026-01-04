@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("TRACKING", "Navegación: Buenos Días")
 
                     val homeFragment = createHomeFragment()
-                    homeFragment.setCategoryToLoad(categoryId = 1, categoryName = "Buenos Días")
+                    homeFragment.setCategoryToLoad(categoryId = 1, categoryName = getString(R.string.dia_buenos_dias))
                     loadFragment(homeFragment)
                     true
                 }

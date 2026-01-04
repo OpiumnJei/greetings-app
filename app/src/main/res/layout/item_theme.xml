@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
-        tools:text="Nombre Temática"
+        tools:text="@string/placeholder_tematica"
         android:textColor="@android:color/black"
         android:textSize="14sp"
         />

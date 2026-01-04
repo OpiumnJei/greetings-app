@@ -1,5 +1,6 @@
 package com.greetingsapp.mobile.ui
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,11 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.data.model.ThemeModel
 import com.greetingsapp.mobile.data.network.RetrofitClient
 import com.greetingsapp.mobile.databinding.FragmentHomeBinding
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
+import com.greetingsapp.mobile.R.string
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
@@ -113,7 +116,7 @@ class HomeFragment : Fragment() {
         currentNavigationId = navId
 
         clearAdapters()
-        currentTrackingCategory = "Inicio"
+        currentTrackingCategory = getString(R.string.dia_buenos_dias)
 
         //se lanzan estas dos funciones en un viewLifecycleOwner atado a la vista, no al fragment, ni a activities
         viewLifecycleOwner.lifecycleScope.launch {
@@ -197,13 +200,13 @@ class HomeFragment : Fragment() {
                     }
                 } else {
                     Log.e("HomeFragment", "Error: ${response.code()}")
-                    Toast.makeText(requireContext(), "Error al cargar inicio", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), getString(R.string.home_error_carga), Toast.LENGTH_SHORT)
                         .show()
                 }
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Error al cargar inicio: ${e.message}")
                 if (isAdded) {
-                    Toast.makeText(requireContext(), "Sin conexión", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.home_sin_conexion), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -444,13 +447,13 @@ class HomeFragment : Fragment() {
     private fun getThemeNameForToday(): String {
         val today = LocalDate.now().dayOfWeek
         return when (today) {
-            MONDAY -> "Feliz Lunes"
-            TUESDAY -> "Feliz Martes"
-            WEDNESDAY -> "Feliz Miércoles"
-            THURSDAY -> "Feliz Jueves"
-            FRIDAY -> "Feliz Viernes"
-            SATURDAY, SUNDAY -> "Feliz Fin de Semana"
-            else -> "Buenos Días"
+            MONDAY -> getString(R.string.dia_lunes)
+            TUESDAY -> getString(R.string.dia_martes)
+            WEDNESDAY -> getString(R.string.dia_miercoles)
+            THURSDAY -> getString(R.string.dia_jueves)
+            FRIDAY -> getString(R.string.dia_viernes)
+            SATURDAY, SUNDAY -> getString(R.string.dia_finde)
+            else -> getString(R.string.dia_buenos_dias)
         }
     }
 

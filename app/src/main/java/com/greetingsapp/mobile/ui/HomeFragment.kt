@@ -18,6 +18,14 @@ import com.greetingsapp.mobile.databinding.FragmentHomeBinding
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek.FRIDAY
+import java.time.DayOfWeek.MONDAY
+import java.time.DayOfWeek.SATURDAY
+import java.time.DayOfWeek.SUNDAY
+import java.time.DayOfWeek.THURSDAY
+import java.time.DayOfWeek.TUESDAY
+import java.time.DayOfWeek.WEDNESDAY
+import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicLong
 
 class HomeFragment : Fragment() {
@@ -70,6 +78,8 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerViews() {
         themesAdapter = ThemesAdapter { selectedTheme ->
             currentTrackingCategory = selectedTheme.themeName
+            // ⭐ Marcamos visualmente el que el usuario tocó
+            themesAdapter.selectThemeById(selectedTheme.themeId)
             loadImages(selectedTheme.themeId)
         }
 
@@ -199,6 +209,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // metodo encargado de mostrar los chips de tematicas y las imagenes del mismo
     private fun executeLoadThemes(categoryId: Long, categoryName: String) {
 
         //para ocultar el searcView cuando se cambie de seccion
@@ -236,13 +247,28 @@ class HomeFragment : Fragment() {
                 // Si navId == currentNavigation, si coinciden, aun estamos en la misma vista, por lo que actualizamos
                 if (response.isSuccessful) {
                     val themes = response.body() ?: emptyList()
-                    themesAdapter.submitList(themes)
 
-                    if (themes.isNotEmpty()) {
-                        loadImages(
-                            themes[0].themeId,
-                            navId
-                        ) //pasamos navId al metodo encargado de cargar las imagenes
+                    // ⭐ Si es "Saludos", reordenamos la lista en el frontend
+                    val orderedThemes =
+                        if (categoryName.equals(currentTrackingCategory, ignoreCase = true)) {
+                            reorderThemesWithTodayFirst(themes)
+                        } else {
+                            themes
+                        }
+                    themesAdapter.submitList(orderedThemes)
+
+                    if (orderedThemes.isNotEmpty()) {
+                        // ⭐ LÓGICA INTELIGENTE AQUÍ
+                        var firstTheme  = orderedThemes[0] // Por defecto el primero
+
+                        // 1. Cargamos las imágenes de ese tema
+                        loadImages(firstTheme.themeId, navId) //pasamos navId al metodo encargado de cargar las imagenes
+
+                        // 2. Marcamos el chip visualmente
+                        themesAdapter.selectThemeById(firstTheme.themeId)
+
+                        // 3. Actualizamos el tracking
+                        currentTrackingCategory = firstTheme.themeName
                     }
                 }
             } catch (e: Exception) {
@@ -414,9 +440,49 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // ⭐ Función auxiliar para obtener el nombre esperado (Pon esto al final de la clase)
+    private fun getThemeNameForToday(): String {
+        val today = LocalDate.now().dayOfWeek
+        return when (today) {
+            MONDAY -> "Feliz Lunes"
+            TUESDAY -> "Feliz Martes"
+            WEDNESDAY -> "Feliz Miércoles"
+            THURSDAY -> "Feliz Jueves"
+            FRIDAY -> "Feliz Viernes"
+            SATURDAY, SUNDAY -> "Feliz Fin de Semana"
+            else -> "Buenos Días"
+        }
+    }
+
+    // ⭐ Función auxiliar para reordenar
+    private fun reorderThemesWithTodayFirst(themes: List<ThemeModel>): List<ThemeModel> {
+        val todayThemeName = getThemeNameForToday()
+
+        // Buscar el tema de hoy
+        val todayTheme = themes.find {
+            // verificar para cada tematica comparar si la tematica correspondiente
+            // al dia de hoy se encuentra presente en la lista
+            // Si todayThemeName = "Feliz Lunes"
+            // buscara dentro de themes alguna tematica que coincida con todayThemeName
+            theme -> theme.themeName.equals(todayThemeName, ignoreCase = true)
+        }
+
+        return if (todayTheme != null) {
+            // Crear nueva lista con el de hoy primero
+            listOf(todayTheme)+  //listOf(todayTheme) es una lista que contiene un unico elemento, el tema de hoy
+                    themes.filter { // filter es otra función de orden superior que crea una nueva lista conteniendo solo los elementos que cumplen cierta condición. La condición aquí es que el ID del tema sea diferente del ID del tema de hoy.
+                        // En otras palabras, estamos creando una lista con todos los temas excepto el de hoy.
+                theme -> theme.themeId != todayTheme.themeId
+               }
+        } else {
+            // Si no se encuentra, devolver orden original
+            themes
+        }
+    }
+
     // este metedo se ejecuta al cambiar/navegar/abandonar una vista
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null //anular todos los componentes inflados(objetos koltin) para liberar espacio
-    }
-}
+        _binding =
+            null //anular todos los componentes inflados(objetos koltin) para liberar espacio
+    }}

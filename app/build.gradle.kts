@@ -29,6 +29,8 @@ android {
         }
     }
     compileOptions {
+        // ⭐ Activa el soporte para librerías modernas
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -51,6 +53,8 @@ dependencies {
     // para las corrutinas
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // ⭐ Agrega esta línea para que funcione el desugaring, para mantener compatibilidad con todos los dispositivos
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // ➕ ROOM DATABASE
     implementation(libs.androidx.room.runtime)

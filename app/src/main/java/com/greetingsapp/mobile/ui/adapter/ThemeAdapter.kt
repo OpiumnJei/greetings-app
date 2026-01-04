@@ -11,6 +11,15 @@ import com.greetingsapp.mobile.data.model.ThemeModel
 class ThemesAdapter(private val onThemeSelected: (ThemeModel) -> Unit)//// funcion lambda que recibe un objeto ThemeModel(representacion de una tematica) y no retorna nada(unit)
     : ListAdapter<ThemeModel, ThemeViewHolder>(DiffCallback) {
 
+    // ⭐ Variable para guardar cuál está seleccionado
+    private var selectedThemeId: Long? = null
+
+    // ⭐ Metodo para marcar uno desde fuera (HomeFragment)
+    fun selectThemeById(id: Long) {
+        selectedThemeId = id
+        notifyDataSetChanged() // Refresca la lista para pintar el cambio
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThemeViewHolder {
         val binding = ItemThemeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ThemeViewHolder(binding)
@@ -18,7 +27,9 @@ class ThemesAdapter(private val onThemeSelected: (ThemeModel) -> Unit)//// funci
 
     override fun onBindViewHolder(holder: ThemeViewHolder, position: Int) {
         val theme = getItem(position)
-        holder.bind(theme, onThemeSelected) //se le pasa la funcion lambda como parametro
+        // si id el primer elemento de la lista coincide con el id del elemento seleccionado
+        val isSelected = (theme.themeId == selectedThemeId)
+        holder.bind(theme,isSelected, onThemeSelected) //se le pasa la funcion lambda como parametro
     }
 
 

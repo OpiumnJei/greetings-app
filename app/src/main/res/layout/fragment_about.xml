@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:text="Saludos Diarios"
+            android:text="@string/about_titulo"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
-            android:text="Versión 1.0.0"
+            android:text="@string/about_version"
             android:textColor="@android:color/darker_gray" />
 
         <!-- Sección: Contacto -->
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="📧 Contacto"
+            android:text="@string/about_contacto_titulo"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Enviar email"
+            android:text="@string/about_btn_email"
             style="@style/Widget.Material3.Button.OutlinedButton" />
 
         <com.google.android.material.button.MaterialButton
@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Reportar un problema"
+            android:text="@string/about_btn_reportar"
             style="@style/Widget.Material3.Button.OutlinedButton" />
 
         <!-- Sección: Apoyo -->
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="☕ Apoya el desarrollo"
+            android:text="@string/about_apoyo_titulo"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Invítame un café ☕"
+            android:text="@string/about_btn_cafe"
             app:icon="@drawable/ic_favorite_filled"
             app:iconSize="20dp"
             app:backgroundTint="@color/purple_500" />
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="LinkedIn"
+            android:text="@string/about_btn_linkedin"
             app:icon="@drawable/ic_linkedin"
             app:iconPadding="0dp"
             app:iconGravity="start"
@@ -98,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="📄 Legal"
+            android:text="@string/about_legal_titulo"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Política de privacidad"
+            android:text="@string/about_btn_privacidad"
             style="@style/Widget.Material3.Button.TextButton" />
 
         <!-- Sección: Redes sociales -->
@@ -115,7 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="❤️ Síguenos"
+            android:text="@string/about_redes_titulo"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Instagram"
+                android:text="@string/about_btn_instagram"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
 
             <com.google.android.material.button.MaterialButton
@@ -139,7 +139,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Twitter"
+                android:text="@string/about_btn_twitter"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
         </LinearLayout>
 
@@ -149,7 +149,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
-            android:text="Hecho con ❤️ en República Dominicana"
+            android:text="@string/about_footer"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
     </LinearLayout>

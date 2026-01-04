@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.greetingsapp.mobile.BuildConfig
+import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.databinding.FragmentAboutBinding
 
 class AboutFragment : Fragment() {
@@ -36,7 +37,7 @@ class AboutFragment : Fragment() {
         // ⭐ TIP: Usa strings.xml con argumentos para facilitar la traducción
         // En strings.xml: <string name="app_version">Versión %s</string>
         // binding.tvAppVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
-        binding.tvAppVersion.text = "Versión ${BuildConfig.VERSION_NAME}"
+        binding.tvAppVersion.text = getString(R.string.about_version, BuildConfig.VERSION_NAME)
     }
 
     private fun setupButtons() {
@@ -45,7 +46,7 @@ class AboutFragment : Fragment() {
             btnContact.setOnClickListener {
                 sendEmail(
                     address = "soporte@saludosdiarios.app",
-                    subject = "Contacto desde Saludos Diarios"
+                    subject = getString(R.string.email_subject_contact)
                 )
             }
 
@@ -61,7 +62,7 @@ class AboutFragment : Fragment() {
 
                 sendEmail(
                     address = "bugs@saludosdiarios.app",
-                    subject = "🐛 Reporte de Bug - v${BuildConfig.VERSION_NAME}",
+                    subject = getString(R.string.email_subject_bug),
                     body = "Describe el problema aquí:\n$deviceInfo"
                 )
             }
@@ -115,7 +116,7 @@ class AboutFragment : Fragment() {
             }
         }
         /// con Intent.createChooser forzamos a que aparezca el menu de seleccion de apps Bottom Sheet
-        launchIntentSafe(Intent.createChooser(intent, "Enviar correo")) // "Enviar correo"-> titulo personalizado
+        launchIntentSafe(Intent.createChooser(intent, getString(R.string.email_chooser_title))) // "Enviar correo"-> titulo personalizado
     }
 
     // helper function encargada de abrir urls externas
@@ -141,9 +142,9 @@ class AboutFragment : Fragment() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(requireContext(), "No hay aplicación disponible para esta acción", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error_no_app), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Error al abrir la aplicación", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error_open_app), Toast.LENGTH_SHORT).show()
         }
     }
 

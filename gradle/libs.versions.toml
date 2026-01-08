@@ -14,6 +14,7 @@ ksp = "2.0.21-1.0.27"  # ➕ Agrega esta línea (Versión exacta para Kotlin 2.0
 room = "2.6.1"         # ➕ Agrega esta línea
 lifecycle = "2.6.2"  # ➕ Agrega esta versión (o 2.7.0 / 2.8.x si prefieres)
 desugar_jdk_libs = "2.0.4" # para mantener compatibilidad con todos los dispositivos
+shimmer = "0.5.0" # para las animaciones
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,13 +27,13 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar_jdk_libs" } # ➕ Agrega esta definición para mantener compatibilidad con todos los dispositivos
-
 # ➕ Agrega estas 3 líneas para Room:
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 # ➕ Agrega esta línea (Es la que contiene viewModelScope):
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+facebook-shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }   # para las animaciones
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

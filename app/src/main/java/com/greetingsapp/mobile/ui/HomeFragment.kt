@@ -118,9 +118,16 @@ class HomeFragment : Fragment() {
         clearAdapters()
         currentTrackingCategory = getString(R.string.dia_buenos_dias)
 
+        // 1. Mostrar shimmer al iniciar la carga del Home
+        showLoading()
+
         //se lanzan estas dos funciones en un viewLifecycleOwner atado a la vista, no al fragment, ni a activities
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                // ⭐ TRUCO: Retraso de 3 segundos (3000ms)
+//                 Esto simula una conexión lenta a internet
+                kotlinx.coroutines.delay(3000)
+
                 // ⭐ NUEVO: Llamada al endpoint inteligente
                 val response = RetrofitClient.instance.getHomeContent()
 
@@ -208,12 +215,23 @@ class HomeFragment : Fragment() {
                 if (isAdded) {
                     Toast.makeText(requireContext(), getString(R.string.home_sin_conexion), Toast.LENGTH_SHORT).show()
                 }
+            }finally {
+                hideLoading() //oculta la animacion
             }
         }
     }
 
     // metodo encargado de mostrar los chips de tematicas y las imagenes del mismo
     private fun executeLoadThemes(categoryId: Long, categoryName: String) {
+
+        // ⭐ AGREGAR ESTOS LOGS
+        Log.d("SHIMMER_DEBUG", """
+        🔍 Estado ANTES de cargar:
+        - shimmerTheme visibility: ${binding.shimmerContainerTheme.visibility}
+        - shimmerImg visibility: ${binding.shimmerContainerImg.visibility}
+        - recyclerThemes visibility: ${binding.recyclerViewThemes.visibility}
+        - recyclerImages visibility: ${binding.recyclerViewImages.visibility}
+    """.trimIndent())
 
         //para ocultar el searcView cuando se cambie de seccion
         _binding?.searchView?.visibility = View.GONE
@@ -229,8 +247,14 @@ class HomeFragment : Fragment() {
         _binding?.specialDayBanner?.visibility = View.GONE
         _binding?.recyclerViewThemes?.visibility = View.VISIBLE
 
+        showLoading()
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+
+                // ⭐ TRUCO: Retraso de 3 segundos (3000ms)
+                // Esto simula una conexión lenta a internet
+                kotlinx.coroutines.delay(2000)
+
                 //llamada a la API
                 val response = RetrofitClient.instance.getThemesByCategory(categoryId)
 
@@ -250,6 +274,12 @@ class HomeFragment : Fragment() {
                 // Si navId == currentNavigation, si coinciden, aun estamos en la misma vista, por lo que actualizamos
                 if (response.isSuccessful) {
                     val themes = response.body() ?: emptyList()
+                    // ⭐ AGREGAR ESTE LOG
+                    Log.d("SHIMMER_DEBUG", """
+                    🔍 Estado DESPUÉS de cargar themes:
+                    - shimmerTheme visibility: ${binding.shimmerContainerTheme.visibility}
+                    - shimmerImg visibility: ${binding.shimmerContainerImg.visibility}
+                """.trimIndent())
 
                     // ⭐ Si es "Saludos", reordenamos la lista en el frontend
                     val orderedThemes =
@@ -279,6 +309,9 @@ class HomeFragment : Fragment() {
                 if (isAdded) { //nos aseguramos que el fragment aun este conectado a la activity
                     Toast.makeText(requireContext(), "Error al cargar", Toast.LENGTH_SHORT).show()
                 }
+            }
+            finally {
+                hideLoading()
             }
         }
     }
@@ -398,7 +431,6 @@ class HomeFragment : Fragment() {
             binding.specialDayBanner.visibility = View.GONE
             binding.recyclerViewThemes.visibility =
                 View.GONE // Ocultamos temas durante búsqueda para limpiar UI
-            binding.progressBar.visibility = View.VISIBLE // Asumiendo que tienes una ProgressBar
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -411,8 +443,6 @@ class HomeFragment : Fragment() {
                 if (navId != currentNavigationId) {
                     return@launch
                 }
-
-                _binding?.progressBar?.visibility = View.GONE //ocultar
 
                 // Si tuvieras respuesta real:
                 if (response.isSuccessful) {
@@ -437,7 +467,6 @@ class HomeFragment : Fragment() {
             } catch (e: Exception) {
                 if (navId != currentNavigationId) return@launch
                 Log.e("HomeFragment", "Error en búsqueda: ${e.message}")
-                _binding?.progressBar?.visibility = View.GONE
                 Toast.makeText(requireContext(), "Error al buscar", Toast.LENGTH_SHORT).show()
             }
         }
@@ -481,6 +510,27 @@ class HomeFragment : Fragment() {
             // Si no se encuentra, devolver orden original
             themes
         }
+    }
+
+    //funciones para controlar la animacion
+
+    // Mostrar animacion
+    private fun showLoading() {
+        binding.shimmerContainerImg.visibility = View.VISIBLE
+        binding.shimmerContainerTheme.visibility = View.VISIBLE
+        // AGREGAR ESTA LÍNEA: Reinicia la animación explícitamente
+        binding.shimmerContainerImg.startShimmer()
+        binding.shimmerContainerTheme.startShimmer()
+    }
+
+    // Ocultar animacion
+    private fun hideLoading() {
+        binding.shimmerContainerImg.stopShimmer()
+        binding.shimmerContainerImg.visibility = View.GONE
+        binding.shimmerContainerTheme.stopShimmer()
+        binding.shimmerContainerTheme.visibility = View.GONE
+
+        binding.recyclerViewImages.visibility = View.VISIBLE
     }
 
     // este metedo se ejecuta al cambiar/navegar/abandonar una vista

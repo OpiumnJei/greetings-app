@@ -53,9 +53,10 @@ dependencies {
     // para las corrutinas
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    // ⭐ Agrega esta línea para que funcione el desugaring, para mantener compatibilidad con todos los dispositivos
+    // para que funcione el desugaring, para mantener compatibilidad con todos los dispositivos
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
+    implementation(libs.facebook.shimmer)
     // ➕ ROOM DATABASE
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

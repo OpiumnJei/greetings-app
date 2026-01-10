@@ -19,7 +19,6 @@ import com.greetingsapp.mobile.data.network.RetrofitClient
 import com.greetingsapp.mobile.databinding.FragmentHomeBinding
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
-import com.greetingsapp.mobile.R.string
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
@@ -126,7 +125,7 @@ class HomeFragment : Fragment() {
             try {
                 // ⭐ TRUCO: Retraso de 3 segundos (3000ms)
 //                 Esto simula una conexión lenta a internet
-                kotlinx.coroutines.delay(3000)
+//                kotlinx.coroutines.delay(3000)
 
                 // ⭐ NUEVO: Llamada al endpoint inteligente
                 val response = RetrofitClient.instance.getHomeContent()
@@ -139,17 +138,25 @@ class HomeFragment : Fragment() {
                 if (response.isSuccessful) {
                     val homeContent = response.body()
 
-                    if (homeContent != null) {
-                        Log.d(
-                            "HomeFragment", """
-                            🔍 DEBUG COMPLETO:
-                             - JSON recibido: ${response.body()}
-                             - contentType: '${homeContent.contentType}'
-                             - title: '${homeContent.title}'
-                             - images: ${homeContent.images.size}
-                             - Match SPECIAL_EVENT: ${homeContent.contentType == "SPECIAL_EVENT"}
-                            """.trimIndent()
+                    if (homeContent == null || homeContent.images.isEmpty()) {
+                        showError(
+                            message = "No hay contenido disponible",
+                            canRetry = true,
+                            onRetry = { loadHomeContent() }
                         )
+                        return@launch
+
+//                        Log.d(
+//                            "HomeFragment", """
+//                            🔍 DEBUG COMPLETO:
+//                             - JSON recibido: ${response.body()}
+//                             - contentType: '${homeContent.contentType}'
+//                             - title: '${homeContent.title}'
+//                             - images: ${homeContent.images.size}
+//                             - Match SPECIAL_EVENT: ${homeContent.contentType == "SPECIAL_EVENT"}
+//                            """.trimIndent()
+//                        )
+                    }
 
                         // ⭐ Actualizar UI según el tipo de contenido
                         when (homeContent.contentType) {
@@ -203,20 +210,33 @@ class HomeFragment : Fragment() {
                                     "📅 Contenido normal: ${homeContent.images.size} imágenes"
                                 )
                             }
+
                         }
-                    }
+                    hideError()
                 } else {
-                    Log.e("HomeFragment", "Error: ${response.code()}")
-                    Toast.makeText(requireContext(), getString(R.string.home_error_carga), Toast.LENGTH_SHORT)
-                        .show()
+                    showError(
+                        message = "Error al cargar inicio",
+                        canRetry = true,
+                        onRetry = { loadHomeContent() }
+                    )
                 }
+            } catch (e: java.io.IOException) {
+                if (navId != currentNavigationId) return@launch
+                showError(
+                    message = "Sin conexión a internet",
+                    canRetry = true,
+                    onRetry = { loadHomeContent() }
+                )
             } catch (e: Exception) {
-                Log.e("HomeFragment", "Error al cargar inicio: ${e.message}")
-                if (isAdded) {
-                    Toast.makeText(requireContext(), getString(R.string.home_sin_conexion), Toast.LENGTH_SHORT).show()
-                }
-            }finally {
-                hideLoading() //oculta la animacion
+                if (navId != currentNavigationId) return@launch
+                Log.e("HomeFragment", "Error: ${e.message}", e)
+                showError(
+                    message = "Error inesperado",
+                    canRetry = true,
+                    onRetry = { loadHomeContent() }
+                )
+            } finally {
+                hideLoading()
             }
         }
     }
@@ -225,13 +245,15 @@ class HomeFragment : Fragment() {
     private fun executeLoadThemes(categoryId: Long, categoryName: String) {
 
         // ⭐ AGREGAR ESTOS LOGS
-        Log.d("SHIMMER_DEBUG", """
-        🔍 Estado ANTES de cargar:
-        - shimmerTheme visibility: ${binding.shimmerContainerTheme.visibility}
-        - shimmerImg visibility: ${binding.shimmerContainerImg.visibility}
-        - recyclerThemes visibility: ${binding.recyclerViewThemes.visibility}
-        - recyclerImages visibility: ${binding.recyclerViewImages.visibility}
-    """.trimIndent())
+//        Log.d(
+//            "SHIMMER_DEBUG", """
+//        🔍 Estado ANTES de cargar:
+//        - shimmerTheme visibility: ${binding.shimmerContainerTheme.visibility}
+//        - shimmerImg visibility: ${binding.shimmerContainerImg.visibility}
+//        - recyclerThemes visibility: ${binding.recyclerViewThemes.visibility}
+//        - recyclerImages visibility: ${binding.recyclerViewImages.visibility}
+//    """.trimIndent()
+//        )
 
         //para ocultar el searcView cuando se cambie de seccion
         _binding?.searchView?.visibility = View.GONE
@@ -253,7 +275,7 @@ class HomeFragment : Fragment() {
 
                 // ⭐ TRUCO: Retraso de 3 segundos (3000ms)
                 // Esto simula una conexión lenta a internet
-                kotlinx.coroutines.delay(2000)
+//                kotlinx.coroutines.delay(2000)
 
                 //llamada a la API
                 val response = RetrofitClient.instance.getThemesByCategory(categoryId)
@@ -274,12 +296,18 @@ class HomeFragment : Fragment() {
                 // Si navId == currentNavigation, si coinciden, aun estamos en la misma vista, por lo que actualizamos
                 if (response.isSuccessful) {
                     val themes = response.body() ?: emptyList()
-                    // ⭐ AGREGAR ESTE LOG
-                    Log.d("SHIMMER_DEBUG", """
-                    🔍 Estado DESPUÉS de cargar themes:
-                    - shimmerTheme visibility: ${binding.shimmerContainerTheme.visibility}
-                    - shimmerImg visibility: ${binding.shimmerContainerImg.visibility}
-                """.trimIndent())
+
+                    // ✅ Solo verificar si la respuesta es null
+                    if (themes.isEmpty()) {
+                        Log.w("HomeFragment", "La categoría $categoryName no tiene temas")
+                        // Opcionalmente mostrar mensaje informativo
+                        Toast.makeText(
+                            requireContext(),
+                            "Esta categoría aún no tiene contenido",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@launch
+                    }
 
                     // ⭐ Si es "Saludos", reordenamos la lista en el frontend
                     val orderedThemes =
@@ -288,14 +316,19 @@ class HomeFragment : Fragment() {
                         } else {
                             themes
                         }
-                    themesAdapter.submitList(orderedThemes)
+
+                    // ⭐ Actualizar UI con éxito
+                    updateUIWithSuccess(orderedThemes)
 
                     if (orderedThemes.isNotEmpty()) {
                         // ⭐ LÓGICA INTELIGENTE AQUÍ
-                        var firstTheme  = orderedThemes[0] // Por defecto el primero
+                        var firstTheme = orderedThemes[0] // Por defecto el primero
 
                         // 1. Cargamos las imágenes de ese tema
-                        loadImages(firstTheme.themeId, navId) //pasamos navId al metodo encargado de cargar las imagenes
+                        loadImages(
+                            firstTheme.themeId,
+                            navId
+                        ) //pasamos navId al metodo encargado de cargar las imagenes
 
                         // 2. Marcamos el chip visualmente
                         themesAdapter.selectThemeById(firstTheme.themeId)
@@ -303,14 +336,35 @@ class HomeFragment : Fragment() {
                         // 3. Actualizamos el tracking
                         currentTrackingCategory = firstTheme.themeName
                     }
+                } else {
+                    // ❌ Error del servidor (404, 500, etc.)
+                    showError(
+                        message = "Error al cargar categorías (${response.code()})",
+                        canRetry = true,
+                        onRetry = { executeLoadThemes(categoryId, categoryName) }
+                    )
                 }
+            } catch (e: java.io.IOException) {
+                // ❌ Sin conexión a internet
+                if (navId != currentNavigationId) return@launch
+
+                showError(
+                    message = "Sin conexión a internet.\nVerifica tu conexión e intenta nuevamente.",
+                    canRetry = true,
+                    onRetry = { executeLoadThemes(categoryId, categoryName) }
+                )
             } catch (e: Exception) {
-                Log.e("HomeFragment", "Error: ${e.message}")
-                if (isAdded) { //nos aseguramos que el fragment aun este conectado a la activity
-                    Toast.makeText(requireContext(), "Error al cargar", Toast.LENGTH_SHORT).show()
-                }
-            }
-            finally {
+                // ❌ Otros errores inesperados
+                if (navId != currentNavigationId) return@launch
+
+                Log.e("HomeFragment", "Error inesperado: ${e.message}", e)
+                showError(
+                    message = "Ocurrió un error inesperado",
+                    canRetry = true,
+                    onRetry = { executeLoadThemes(categoryId, categoryName) }
+                )
+            } finally {
+                //ocultar loading al terminar
                 hideLoading()
             }
         }
@@ -337,13 +391,43 @@ class HomeFragment : Fragment() {
                 if (responseApi.isSuccessful) {
                     val pageResponse = responseApi.body()
                     val imagesList = pageResponse?.content ?: emptyList()
-                    imagesAdapter.submitList(imagesList)
+
+                    // si la lista de imagenes de una tematica esta vacia
+                    if (imagesList.isEmpty()) {
+                        Log.w("HomeFragment", "El tema $themeId no tiene imágenes")
+
+                        // Mostrar estado vacío específico para imágenes
+                        showEmptyImagesState()
+                    }else{
+                        // ✅ Hay imágenes, mostrar normalmente
+                        hideEmptyState()
+                        imagesAdapter.submitList(imagesList)
+                        _binding?.recyclerViewImages?.visibility = View.VISIBLE
+                        Log.d("APP", "Cargadas ${imagesList.size} imágenes")
+                    }
                     Log.d("APP", "Cargadas ${imagesList.size} imágenes")
                 } else {
                     Log.e("API_ERROR", "Error del servidor: ${responseApi.code()}")
+                    showError(
+                        message = "Error al cargar imágenes",
+                        canRetry = true,
+                        onRetry = { loadImages(themeId, navId) }
+                    )
                 }
+            } catch (e: java.io.IOException) {
+                Log.e("API_ERROR", "Sin conexión: ${e.message}")
+                showError(
+                    message = "Sin conexión a internet",
+                    canRetry = true,
+                    onRetry = { loadImages(themeId, navId) }
+                )
             } catch (e: Exception) {
-                Log.e("API_ERROR", "Fallo al conectar: ${e.message}")
+                Log.e("API_ERROR", "Error inesperado: ${e.message}", e)
+                showError(
+                    message = "Error al cargar imágenes",
+                    canRetry = true,
+                    onRetry = { loadImages(themeId, navId) }
+                )
             }
         }
     }
@@ -496,16 +580,18 @@ class HomeFragment : Fragment() {
             // al dia de hoy se encuentra presente en la lista
             // Si todayThemeName = "Feliz Lunes"
             // buscara dentro de themes alguna tematica que coincida con todayThemeName
-            theme -> theme.themeName.equals(todayThemeName, ignoreCase = true)
+                theme ->
+            theme.themeName.equals(todayThemeName, ignoreCase = true)
         }
 
         return if (todayTheme != null) {
             // Crear nueva lista con el de hoy primero
-            listOf(todayTheme)+  //listOf(todayTheme) es una lista que contiene un unico elemento, el tema de hoy
+            listOf(todayTheme) +  //listOf(todayTheme) es una lista que contiene un unico elemento, el tema de hoy
                     themes.filter { // filter es otra función de orden superior que crea una nueva lista conteniendo solo los elementos que cumplen cierta condición. La condición aquí es que el ID del tema sea diferente del ID del tema de hoy.
                         // En otras palabras, estamos creando una lista con todos los temas excepto el de hoy.
-                theme -> theme.themeId != todayTheme.themeId
-               }
+                            theme ->
+                        theme.themeId != todayTheme.themeId
+                    }
         } else {
             // Si no se encuentra, devolver orden original
             themes
@@ -533,9 +619,88 @@ class HomeFragment : Fragment() {
         binding.recyclerViewImages.visibility = View.VISIBLE
     }
 
+    // ========== FUNCIONES DE MANEJO DE ESTADOS ==========
+
+    /**
+     * Muestra una pantalla de error con mensaje personalizado
+     * @param message Mensaje a mostrar al usuario
+     * @param canRetry Si es true, muestra botón de reintentar
+     * @param onRetry Acción a ejecutar cuando el usuario presiona reintentar
+     */
+    private fun showError(
+        message: String,
+        canRetry: Boolean = true,
+        onRetry: (() -> Unit)? = null
+    ) {
+        _binding?.let { binding ->
+            // Ocultar todo lo demás
+            hideLoading()
+            binding.recyclerViewImages.visibility = View.GONE
+            binding.recyclerViewThemes.visibility = View.GONE
+            binding.specialDayBanner.visibility = View.GONE
+
+            // Mostrar vista de error
+            binding.errorState.errorStateContainer.visibility = View.VISIBLE
+            binding.errorState.errorMessage.text = message
+
+            // Configurar botón de reintentar
+            if (canRetry && onRetry != null) {
+                binding.errorState.retryButton.visibility = View.VISIBLE
+                binding.errorState.retryButton.setOnClickListener {
+                    binding.errorState.errorStateContainer.visibility = View.GONE
+                    onRetry()
+                }
+            } else {
+                binding.errorState.retryButton.visibility = View.GONE
+            }
+        }
+    }
+
+    /**
+     * Oculta la vista de error
+     */
+    private fun hideError() {
+        _binding?.errorState?.errorStateContainer?.visibility = View.GONE
+    }
+
+    /**
+     * Actualiza la UI cuando la carga es exitosa
+     */
+    private fun updateUIWithSuccess(themes: List<ThemeModel>) {
+        hideError()
+        hideLoading()
+
+        _binding?.let { binding ->
+            binding.recyclerViewThemes.visibility = View.VISIBLE
+            binding.recyclerViewImages.visibility = View.VISIBLE
+        }
+
+        themesAdapter.submitList(themes)
+    }
+
+    /**
+     * Muestra un mensaje cuando un tema no tiene imágenes
+     */
+    private fun showEmptyImagesState() {
+        _binding?.let { binding ->
+            binding.recyclerViewImages.visibility = View.GONE
+
+            // Opción A: Mostrar la vista de error con mensaje personalizado
+            binding.emptyState.emptyStateContainer.visibility = View.VISIBLE
+        }
+    }
+
+    /**
+     * Oculta el estado vacío
+     */
+    private fun hideEmptyState() {
+        _binding?.emptyState?.emptyStateContainer?.visibility = View.GONE
+    }
+
     // este metedo se ejecuta al cambiar/navegar/abandonar una vista
     override fun onDestroyView() {
         super.onDestroyView()
         _binding =
             null //anular todos los componentes inflados(objetos koltin) para liberar espacio
-    }}
+    }
+}

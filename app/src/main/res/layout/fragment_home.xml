@@ -20,23 +20,21 @@
     <!-- Shimmer para los temas/tematicas -->
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerContainerTheme"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_marginTop="10dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/searchView">
 
         <!--  layouts usados para la animacion-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <include
                 layout="@layout/item_theme_shimmer"
@@ -125,15 +123,14 @@
     <!-- Shimmer para imagenes -->
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerContainerImg"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/specialDayBanner"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/specialDayBanner">
 
         <!--  layouts usados para la animacion-->
         <LinearLayout
@@ -244,5 +241,25 @@
         app:spanCount="2"
         tools:listitem="@layout/item_image" />
 
+    <!-- Vista de error -->
+    <include
+        android:id="@+id/errorState"
+        layout="@layout/view_error_state"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
+    <!-- Vista de estado vacío -->
+    <include
+        android:id="@+id/emptyState"
+        layout="@layout/view_empty_state"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewThemes" />
 </androidx.constraintlayout.widget.ConstraintLayout>

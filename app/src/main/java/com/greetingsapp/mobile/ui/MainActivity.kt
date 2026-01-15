@@ -56,9 +56,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_buenos_dias -> {
                     Log.d("TRACKING", "Navegación: Buenos Días")
 
-                    val homeFragment = createHomeFragment()
-                    homeFragment.setCategoryToLoad(categoryId = 1, categoryName = getString(R.string.dia_buenos_dias))
-                    loadFragment(homeFragment)
+                    // ⭐ NUEVO: Navegar directamente a CategoryImagesFragment y cargar la instancia que contiene las tematicas
+                    val categoryFragment = CategoryImagesFragment.newInstanceWithThemes(
+                        categoryId = 1L, // ID de la categoría "Saludos/Buenos Días"
+                        categoryName = getString(R.string.dia_buenos_dias)
+                    )
+                    loadFragment(categoryFragment)
                     true
                 }
 

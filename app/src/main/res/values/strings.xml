@@ -30,7 +30,8 @@
     <string name="home_nav_obsoleta">Navegación obsoleta, descartando</string>
     <string name="home_error_carga">Error al cargar inicio</string>
     <string name="home_sin_conexion">Sin conexión</string>
-    <string name="home_busqueda_prefix">Búsqueda: %1$s</string> <string name="home_no_resultados">No se encontraron resultados para \'%1$s\'</string>
+    <string name="home_busqueda_prefix">Búsqueda: %1$s</string>
+    <string name="home_no_resultados">No se encontraron resultados para \'%1$s\'</string>
 
     <string name="dia_lunes">Feliz Lunes</string>
     <string name="dia_martes">Feliz Martes</string>

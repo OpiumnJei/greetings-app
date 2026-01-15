@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- permiso para usar el internet del celular -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- visibilidad de paquetes para asegurarnos que siempre el sistema
     nos provea accesibilidad para abrir las apps, ya el sistema podría mentir y

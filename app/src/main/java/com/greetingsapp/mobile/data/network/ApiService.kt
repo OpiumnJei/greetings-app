@@ -44,6 +44,13 @@ interface ApiService {
     suspend fun getHomeContent(): Response<HomeContentModel>
 
     // 6. Trae imagenes que coincidan con la Query
- @GET("/api/images/search")
- suspend fun searchImages(@Query("q") query: String): Response<PageResponse<ImageModel>>
+    @GET("/api/images/search")
+    suspend fun searchImages(@Query("q") query: String): Response<PageResponse<ImageModel>>
+
+    // ⭐ NUEVO ENDPOINT
+    @GET("api/categories/{categoryId}/images")
+    suspend fun getImagesByCategory(
+        @Path("categoryId") categoryId: Long
+    ): Response<PageResponse<ImageModel>> // Asegúrate de que tu clase 'Page' tenga el campo 'content'
+
 }

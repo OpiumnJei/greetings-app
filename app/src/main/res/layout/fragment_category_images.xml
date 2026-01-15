@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Título de la categoría -->
+    <TextView
+        android:id="@+id/tvCategoryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text=""
+        android:visibility="gone"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- RV que muestra las temáticas en forma de chips -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewThemes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCategoryTitle"
+        tools:listitem="@layout/item_theme" />
+
+    <!-- Shimmer para los temas/tematicas -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerContainerTheme"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCategoryTitle">
+
+        <!--  layouts usados para la animacion-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <include
+                layout="@layout/item_theme_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1" />
+
+            <include
+                layout="@layout/item_theme_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1" />
+
+            <include
+                layout="@layout/item_theme_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <!-- Shimmer para imagenes -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerContainerImg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCategoryTitle">
+
+        <!--  layouts usados para la animacion-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+
+                <include
+                    layout="@layout/item_image_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <!-- RecyclerView de imágenes -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewImages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewThemes" />
+
+    <!-- Vista de error (reutiliza la que ya tienes) -->
+    <include
+        android:id="@+id/errorState"
+        layout="@layout/view_error_state"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCategoryTitle" />
+
+    <!-- Vista de estado vacío -->
+    <include
+        android:id="@+id/emptyState"
+        layout="@layout/view_empty_state"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCategoryTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -92,7 +92,10 @@ class HomeFragment : Fragment() {
         }
 
         binding.recyclerViewImages.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
+            // ✨ Reutilizando la lógica para mantener la consistencia
+            val dynamicSpanCount = requireContext().calculateDynamicSpanCount(160)
+
+            layoutManager = GridLayoutManager(requireContext(), dynamicSpanCount)
             adapter = imagesAdapter
         }
     }

@@ -16,6 +16,7 @@ import com.greetingsapp.mobile.databinding.FragmentCategoryImagesBinding
 import com.greetingsapp.mobile.ui.ImageDetailActivity
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
+import com.greetingsapp.mobile.ui.calculateDynamicSpanCount
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
@@ -152,7 +153,11 @@ class CategoryImagesFragment : Fragment() {
         }
 
         binding.recyclerViewImages.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
+
+            // ⭐ AQUÍ ESTÁ LA MAGIA RESPONSIVE:
+            val dynamicSpanCount = requireContext().calculateDynamicSpanCount(160)
+
+            layoutManager = GridLayoutManager(requireContext(), dynamicSpanCount)
             adapter = imagesAdapter
         }
     }
@@ -470,7 +475,6 @@ class CategoryImagesFragment : Fragment() {
     private fun hideEmptyState() {
         _binding?.emptyState?.emptyStateContainer?.visibility = View.GONE
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

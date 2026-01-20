@@ -1,6 +1,8 @@
-package com.greetingsapp.mobile.ui
+package com.greetingsapp.mobile.ui.utils
 
 import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 
 /**
  * Calcula cuántas columnas caben en la pantalla.
@@ -30,3 +32,18 @@ fun Context.calculateDynamicSpanCount(minWidthDp: Int = 160): Int {
         return 2
     }
 }
+
+// muestra el teclado
+fun View.showKeyboard() {
+    this.requestFocus()
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+}
+
+// oculta el teclado
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
+    clearFocus()
+}
+

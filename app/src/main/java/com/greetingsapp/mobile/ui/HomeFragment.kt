@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.data.model.ThemeModel
 import com.greetingsapp.mobile.data.network.RetrofitClient
-import com.greetingsapp.mobile.databinding.FragmentCategoryImagesBinding
 import com.greetingsapp.mobile.databinding.FragmentHomeBinding
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
+import com.greetingsapp.mobile.ui.utils.calculateDynamicSpanCount
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicLong
 
@@ -272,126 +272,64 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // ⭐ NUEVO: Lógica completa del SearchView
+    // Configura el searchView ubicado en el fragment_home.xml
     private fun setupSearchLogic() {
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        // [SEGURIDAD] Limpiamos el foco del SearchView visual por si acaso el XML fallara en alguna versión rara de Android.
+        binding.searchView.clearFocus()
 
-            // 1. Se ejecuta cuando el usuario presiona "Enter" o el icono de lupa en el teclado
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (!query.isNullOrEmpty()) {
-                    executeSearch(query) //metodo encargado de hacer la busqueda a la API
-                    binding.searchView.clearFocus() // Ocultar teclado
-                }
-                return true
-            }
+        // [SEGURIDAD] Deshabilitamos el SearchView para asegurar que no procese clicks internos (como la X de cerrar).
+        // Esto garantiza que T0DO toque vaya a nuestra capa superior.
+        binding.searchView.isEnabled = false
 
-            // 2. Se ejecuta cada vez que el usuario escribe una letra
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // si el usuario borra t0do el texto se recargara automaticamente el contenido de home
-                if (newText.isNullOrEmpty()) {
-                    // Si el usuario borra manualmente t0do, podemos recargar el home
-                    // o simplemente esperar
-                    loadHomeContent()
-                }
-                return false
-            }
-        })
-        // 3. Detectar cuando cierran el buscador (la X)
-        binding.searchView.setOnCloseListener {
-            loadHomeContent() // Volver al estado inicial
-            false
+        // [INTERACCIÓN] Configuramos el listener en la CAPA INVISIBLE (Overlay).
+        binding.viewSearchOverlay.setOnClickListener {
+            // Al tocar la "barra" (que en realidad es el View transparente), navegamos.
+            openSearchFragment()
         }
     }
 
-    // ⭐ NUEVO: Ejecuta la búsqueda contra la API
-    private fun executeSearch(query: String) {
-        // Generamos ticket nuevo para invalidar cargas anteriores
-        val navId = navigationId.incrementAndGet()
-        currentNavigationId = navId
+    // para navegar al fragmento que muestra los resultados tras la busqueda
+    private fun openSearchFragment() {
+        // Instancia del fragmento real de búsqueda
+        val searchFragment = SearchFragment()
 
-        clearAdapters()
-        showLoading()
-        // UI: Ocultamos banner y mostramos loader
-        _binding?.let { binding ->
-            binding.specialDayBanner.visibility = View.GONE
-            binding.recyclerViewThemes.visibility =
-                View.GONE // Ocultamos temas durante búsqueda para limpiar UI
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                // Opción A: Tienes endpoint (Ideal)
-                val response = RetrofitClient.instance.searchImages(query)
-
-                if (navId != currentNavigationId) {
-                    return@launch
-                }
-
-                // Si tuvieras respuesta real:
-                if (response.isSuccessful) {
-                    //obtener objeto "Page" completo
-                    val pageResponse = response.body()
-
-                    // 2. Se saca la lista que está ADENTRO de la página (en el campo 'content')
-                    // El operador ?. sirve por si pageResponse es nulo
-                    // El operador ?: sirve para usar una lista vacia si t0do falla
-                    val imagesList = pageResponse?.content ?: emptyList()
-
-                    if (imagesList.isNotEmpty()) {
-                        imagesAdapter.submitList(imagesList)
-                        homeContentTitle = "Búsqueda: $query" // ⭐ Actualizar tracking
-                        hideError()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "No se encontraron resultados para '$query'",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            } catch (e: java.io.IOException) {
-                if (navId == currentNavigationId) {
-                    showError("Sin conexión a internet") { executeSearch(query) }
-                }
-            } catch (e: Exception) {
-                if (navId == currentNavigationId) {
-                    Log.e("HomeFragment", "Error en búsqueda: ${e.message}", e)
-                    Toast.makeText(requireContext(), "Error al buscar", Toast.LENGTH_SHORT).show()
-                }
-            } finally {
-                if (navId == currentNavigationId) {
-                    hideLoading()
-                }
-            }
-        }
+        parentFragmentManager.beginTransaction()
+            // Reemplaza el contenido actual.
+            .replace(R.id.fragmentContainer, searchFragment)
+            // [NAVEGACIÓN] Agrega esta transacción a la pila "Atrás".
+            // Crucial para que el botón físico "Atrás" del móvil nos devuelva al Home.
+            .addToBackStack("SEARCH")
+            .commit()
     }
 
     //funciones para controlar la animacion
 
     // Mostrar animacion
     private fun showLoading() {
-        //hacer visibles los shimmers para animarlos
-        binding.shimmerContainerImg.visibility = View.VISIBLE
-        binding.shimmerContainerTheme.visibility = View.VISIBLE
+        _binding?.let { binding ->
+            binding.shimmerContainerImg.visibility = View.VISIBLE
+            binding.shimmerContainerTheme.visibility = View.VISIBLE
+            binding.shimmerContainerImg.startShimmer()
+            binding.shimmerContainerTheme.startShimmer()
 
-        // AGREGAR ESTA LÍNEA: inicia la animación explícitamente
-        binding.shimmerContainerImg.startShimmer()
-        binding.shimmerContainerTheme.startShimmer()
-
-        //ocultar recyclerView y contenedor de errores
-        binding.recyclerViewImages.visibility = View.GONE
-        binding.errorState.errorStateContainer.visibility = View.GONE
-        binding.emptyState.emptyStateContainer.visibility = View.GONE
+            binding.recyclerViewImages.visibility = View.GONE
+            binding.errorState.errorStateContainer.visibility = View.GONE
+            binding.emptyState.emptyStateContainer.visibility = View.GONE
+        }
     }
 
     // Ocultar animacion
     private fun hideLoading() {
-        binding.shimmerContainerImg.stopShimmer()
-        binding.shimmerContainerImg.visibility = View.GONE
-        binding.shimmerContainerTheme.stopShimmer()
-        binding.shimmerContainerTheme.visibility = View.GONE
+        // Usamos _binding? para que si la vista ya se destruyó,
+        // simplemente ignore este bloque en lugar de crashear.
+        _binding?.let { binding ->
+            binding.shimmerContainerImg.stopShimmer()
+            binding.shimmerContainerImg.visibility = View.GONE
+            binding.shimmerContainerTheme.stopShimmer()
+            binding.shimmerContainerTheme.visibility = View.GONE
 
-        binding.recyclerViewImages.visibility = View.VISIBLE
+            binding.recyclerViewImages.visibility = View.VISIBLE
+        }
     }
 
     // ========== FUNCIONES DE MANEJO DE ESTADOS ==========

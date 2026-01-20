@@ -16,7 +16,7 @@ import com.greetingsapp.mobile.databinding.FragmentCategoryImagesBinding
 import com.greetingsapp.mobile.ui.ImageDetailActivity
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
-import com.greetingsapp.mobile.ui.calculateDynamicSpanCount
+import com.greetingsapp.mobile.ui.utils.calculateDynamicSpanCount
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY

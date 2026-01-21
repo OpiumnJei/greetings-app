@@ -13,6 +13,7 @@ import com.greetingsapp.mobile.data.local.AppDatabase
 import com.greetingsapp.mobile.data.model.ImageModel
 import com.greetingsapp.mobile.databinding.FragmentFavoritesBinding
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
+import com.greetingsapp.mobile.ui.utils.calculateDynamicSpanCount
 import com.greetingsapp.mobile.ui.viewmodel.FavoritesViewModel
 import com.greetingsapp.mobile.ui.viewmodel.FavoritesViewModelFactory
 import kotlinx.coroutines.launch
@@ -76,7 +77,10 @@ class FavoritesFragment : Fragment() {
         }
 
         binding.rvFavorites.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
+            // ⭐ AQUÍ ESTÁ LA MAGIA RESPONSIVE:
+            val dynamicSpanCount = requireContext().calculateDynamicSpanCount(160)
+
+            layoutManager = GridLayoutManager(requireContext(), dynamicSpanCount)
             adapter = this@FavoritesFragment.adapter // @FavoritesFragment especifica que se usara el adapter asociado al fragment(rvFavorites)
         }
     }

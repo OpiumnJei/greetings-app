@@ -106,26 +106,38 @@ class CategoryImagesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // ✅ Configurar la Toolbar antes de cargar datos
+        setupToolbar()
         setupRecyclerView()
 
         if (showThemes) {
             // ☀️ MODO SALUDOS (Desde Bottom Nav)
 
             // Muestra el diseño complejo con chips y oculta el título estático
-            binding.tvCategoryTitle.visibility = View.GONE
             loadThemesAndImages()
         } else {
             // 🏠 MODO DESDE INICIO (Cuando haces click en una categoría en Home)
 
-            // Muestra el diseño simple y pone el título estático
-            binding.tvCategoryTitle.apply {
-                text = categoryName // Usamos el nombre que llegó en los argumentos
-                visibility = View.VISIBLE // hacerlo visible
-            }
-
             // Ocultar recyclerView de temas en este modo (esto estaba bien)
             binding.recyclerViewThemes.visibility = View.GONE
             loadAllCategoryImages()
+        }
+    }
+
+    // ✅ NUEVO METODO: Gestiona la Toolbar
+    private fun setupToolbar() {
+        if (showThemes) {
+            // Caso: Pestaña "Saludos" (Navegación principal)
+            // No mostramos la toolbar
+            binding.toolbar.visibility = View.GONE
+        } else {
+            // Caso: Navegación desde Home -> Categoría
+            binding.toolbar.title = categoryName // Título fijo de la categoría
+
+            // Acción de volver atrás
+            binding.toolbar.setNavigationOnClickListener {
+                parentFragmentManager.popBackStack()
+            }
         }
     }
 
@@ -134,7 +146,7 @@ class CategoryImagesFragment : Fragment() {
             currentThemeId = selectedTheme.themeId
             themesAdapter.selectThemeById(selectedTheme.themeId)
             // ⭐ Actualizar título con el nombre del tema seleccionado
-            binding.tvCategoryTitle.text = selectedTheme.themeName
+            binding.toolbar.title = selectedTheme.themeName
             loadImagesByTheme(selectedTheme.themeId)
         }
 
@@ -148,7 +160,7 @@ class CategoryImagesFragment : Fragment() {
             val intent = Intent(requireContext(), ImageDetailActivity::class.java)
             intent.putExtra("EXTRA_IMAGE_URL", selectedImage.imageUrl)
             // ⭐ Pasar el título actual (puede ser categoría o tema)
-            intent.putExtra("EXTRA_CATEGORY_NAME", binding.tvCategoryTitle.text.toString())
+            intent.putExtra("EXTRA_CATEGORY_NAME", binding.toolbar.title.toString())
             startActivity(intent)
         }
 
@@ -222,7 +234,7 @@ class CategoryImagesFragment : Fragment() {
                     themesAdapter.selectThemeById(todayTheme.themeId)
 
                     // ⭐ Actualizar título con el nombre del tema de hoy
-                    binding.tvCategoryTitle.text = todayTheme.themeName
+                    binding.toolbar.title = todayTheme.themeName
 
                     // Cargamos las imágenes del primer tema
                     loadImagesByTheme(todayTheme.themeId)

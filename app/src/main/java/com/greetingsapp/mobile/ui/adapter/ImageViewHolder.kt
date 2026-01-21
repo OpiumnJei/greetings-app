@@ -20,7 +20,7 @@ class ImageViewHolder(private val binding: ItemImageBinding) :
         binding.imageViewItem.load(imageUrl) {
             crossfade(true) // Efecto de desvanecimiento suave al aparecer
             placeholder(R.drawable.ic_launcher_background) // Muestra esto mientras carga
-            error(R.drawable.ic_launcher_background) // Muestra esto si falla (ej. sin internet)
+            error(R.drawable.ic_broken_image) // Muestra esto si falla,  Icono específico para error
         }
 
         // al hacer click sobre una imagen se llama a este metodo

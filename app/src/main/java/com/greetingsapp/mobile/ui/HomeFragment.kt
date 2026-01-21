@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -126,13 +124,15 @@ class HomeFragment : Fragment() {
                 val response = RetrofitClient.instance.getHomeContent()
 
                 // ⭐ AGREGAR LOG DE LA RESPUESTA
-                Log.d("HomeFragment", """
+                Log.d(
+                    "HomeFragment", """
                 📦 Respuesta recibida:
                 - isSuccessful: ${response.isSuccessful}
                 - code: ${response.code()}
                 - body: ${response.body()}
                 - errorBody: ${response.errorBody()?.string()}
-            """.trimIndent())
+            """.trimIndent()
+                )
 
                 if (navId != currentNavigationId) {
                     Log.d("HomeFragment", "Navegación obsoleta, descartando")
@@ -143,16 +143,20 @@ class HomeFragment : Fragment() {
                     val homeContent = response.body()
 
                     // ⭐ AGREGAR LOG DETALLADO
-                    Log.d("HomeFragment", """
+                    Log.d(
+                        "HomeFragment", """
                     🔍 Contenido parseado:
                     - homeContent es null: ${homeContent == null}
                     - images: ${homeContent?.images?.size ?: 0}
                     - contentType: ${homeContent?.contentType}
                     - title: ${homeContent?.title}
-                """.trimIndent())
+                """.trimIndent()
+                    )
 
                     if (homeContent == null || homeContent.images.isEmpty()) {
-                        showError(message = "No hay contenido disponible", onRetry = { loadHomeContent() })
+                        showError(
+                            message = "No hay contenido disponible",
+                            onRetry = { loadHomeContent() })
                         return@launch
 
                         Log.d(
@@ -189,14 +193,14 @@ class HomeFragment : Fragment() {
                             imagesAdapter.submitList(homeContent.images)
                             homeContentTitle = homeContent.title
 
-                            Log.d(
-                                "HomeFragment", """
-                                    🎨 UI actualizada:
-                                    - Banner visible: ${binding.specialDayBanner.visibility == View.VISIBLE}
-                                    - SearchView visible: ${binding.searchView.visibility == View.VISIBLE}
-                                    - Themes visible: ${binding.recyclerViewThemes.visibility == View.VISIBLE}
-                                """.trimIndent()
-                            )
+//                            Log.d(
+//                                "HomeFragment", """
+//                                    🎨 UI actualizada:
+//                                    - Banner visible: ${binding.specialDayBanner.visibility == View.VISIBLE}
+//                                    - SearchView visible: ${binding.searchView.visibility == View.VISIBLE}
+//                                    - Themes visible: ${binding.recyclerViewThemes.visibility == View.VISIBLE}
+//                                """.trimIndent()
+//                            )
                         }
 
                         else -> {
@@ -215,26 +219,26 @@ class HomeFragment : Fragment() {
                             // Mostrar últimas imágenes
                             imagesAdapter.submitList(homeContent.images)
 
-                            Log.d(
-                                "HomeFragment",
-                                "📅 Contenido normal: ${homeContent.images.size} imágenes"
-                            )
+//                            Log.d(
+//                                "HomeFragment",
+//                                "📅 Contenido normal: ${homeContent.images.size} imágenes"
+//                            )
                         }
                     }
                     hideError()
                 } else {
                     // ⭐ AGREGAR LOG
-                    Log.e("HomeFragment", "❌ Error HTTP: ${response.code()}")
+//                    Log.e("HomeFragment", "❌ Error HTTP: ${response.code()}")
                     showError(message = "Error al cargar inicio", onRetry = { loadHomeContent() })
                 }
             } catch (e: java.io.IOException) {
-                Log.e("HomeFragment", "❌ Sin conexión: ${e.message}", e)
+//                Log.e("HomeFragment", "❌ Sin conexión: ${e.message}", e)
                 //valalidar si el usuario aun esta en la misma ventana, si esta se muestra el error, si no esta, no hacer nada
                 if (navId == currentNavigationId) {
                     showError(message = "Sin conexión a internet", onRetry = { loadHomeContent() })
                 }
             } catch (e: Exception) {
-                Log.e("HomeFragment", "Error: ${e.message}", e)
+//                Log.e("HomeFragment", "Error: ${e.message}", e)
                 if (navId == currentNavigationId) {
                     showError(message = "Error inesperado", onRetry = { loadHomeContent() })
                 }
@@ -253,7 +257,7 @@ class HomeFragment : Fragment() {
 
             // ⭐ Verificar antes de actualizar UI
             if (navId != currentNavigationId) {
-                Log.d("HomeFragment", "Navegación obsoleta (categorías), descartando")
+//                Log.d("HomeFragment", "Navegación obsoleta (categorías), descartando")
                 return
             }
 
@@ -369,6 +373,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
     /**
      * Oculta la vista de error
      */

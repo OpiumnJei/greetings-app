@@ -10,6 +10,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.gms.ads.AdRequest
+import com.greetingsapp.mobile.ads.AdManager
 import com.greetingsapp.mobile.data.network.RetrofitClient
 import com.greetingsapp.mobile.databinding.FragmentSearchBinding
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
@@ -21,10 +23,18 @@ import java.util.concurrent.atomic.AtomicLong
 
 class SearchFragment : Fragment() {
 
+    // ➕ Número de clics antes de mostrar un intersticial
+    companion object {
+        private const val CLICKS_BEFORE_INTERSTITIAL = 2
+    }
+
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var imagesAdapter: ImagesAdapter
+
+    // ➕ Contador de clics en imágenes (para intersticiales)
+    private var imageClickCount = 0
 
     // Control de concurrencia, para prevenir race conditions
     private val navigationId = AtomicLong(0)
@@ -45,6 +55,14 @@ class SearchFragment : Fragment() {
         setupSearchLogic()       // Configura qué pasa al escribir o cerrar
         setupBackPressHandling() // Configura el botón físico "Atrás"
         openKeyboard()           // Fuerza la apertura del teclado al entrar
+        // ➕ Cargar banner de AdMob
+        loadBannerAd()
+    }
+
+    // ➕ Función para cargar el banner
+    private fun loadBannerAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adViewBanner.loadAd(adRequest)
     }
 
     // 2. Lógica del Buscador y detección de salida
@@ -132,10 +150,24 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         imagesAdapter = ImagesAdapter { selectedImage ->
-            val intent = Intent(requireContext(), ImageDetailActivity::class.java)
-            intent.putExtra("EXTRA_IMAGE_URL", selectedImage.imageUrl)
-            intent.putExtra("EXTRA_CATEGORY_NAME", "Búsqueda")
-            startActivity(intent)
+            // ➕ Incrementar contador y verificar si mostrar intersticial
+            imageClickCount++
+
+            if (imageClickCount >= CLICKS_BEFORE_INTERSTITIAL) {
+                // Resetear contador
+                imageClickCount = 0
+
+                // Mostrar intersticial y luego navegar
+                activity?.let { activity ->
+                    AdManager.showInterstitialIfReady(activity) {
+                        // Este callback se ejecuta cuando el usuario cierra el anuncio
+                        navigateToImageDetail(selectedImage.imageUrl)
+                    }
+                }
+            } else {
+                // Navegar directamente sin anuncio
+                navigateToImageDetail(selectedImage.imageUrl)
+            }
         }
 
         binding.recyclerViewResults.apply {
@@ -144,6 +176,14 @@ class SearchFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(), dynamicSpan)
             adapter = imagesAdapter
         }
+    }
+
+    // ➕ Función auxiliar para navegar a ImageDetailActivity
+    private fun navigateToImageDetail(imageUrl: String) {
+        val intent = Intent(requireContext(), ImageDetailActivity::class.java)
+        intent.putExtra("EXTRA_IMAGE_URL", imageUrl)
+        intent.putExtra("EXTRA_CATEGORY_NAME", "Búsqueda")
+        startActivity(intent)
     }
 
     //    Ejecuta la búsqueda contra la API

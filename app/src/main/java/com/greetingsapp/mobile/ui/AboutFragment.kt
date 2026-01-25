@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.gms.ads.AdRequest
 import com.greetingsapp.mobile.BuildConfig
 import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.databinding.FragmentAboutBinding
@@ -31,6 +32,14 @@ class AboutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupVersionInfo()
         setupButtons()
+        // ➕ Cargar banner de AdMob
+        loadBannerAd()
+    }
+
+    // ➕ Función para cargar el banner
+    private fun loadBannerAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adViewBanner.loadAd(adRequest)
     }
 
     private fun setupVersionInfo() {

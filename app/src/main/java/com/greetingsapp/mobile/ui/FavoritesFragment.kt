@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.gms.ads.AdRequest
+import com.greetingsapp.mobile.ads.AdManager
 import com.greetingsapp.mobile.data.local.AppDatabase
 import com.greetingsapp.mobile.data.model.ImageModel
 import com.greetingsapp.mobile.databinding.FragmentFavoritesBinding
@@ -19,6 +21,11 @@ import com.greetingsapp.mobile.ui.viewmodel.FavoritesViewModelFactory
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
+
+    // ➕ Número de clics antes de mostrar un intersticial
+    companion object {
+        private const val CLICKS_BEFORE_INTERSTITIAL = 2
+    }
 
     // _binding: Referencia a los botones y textos del XML.
     // Es nullable (?) porque cuando te vas de esta pantalla, Android borra la vista
@@ -33,6 +40,9 @@ class FavoritesFragment : Fragment() {
 
     // Reusamos el adaptador de imágenes que ya tienes (¡Reciclaje de código!)
     private lateinit var adapter: ImagesAdapter
+
+    // ➕ Contador de clics en imágenes (para intersticiales)
+    private var imageClickCount = 0
 
     // --- CICLO DE VIDA: PASO 1 (Nacimiento de la Interfaz) ---
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,6 +62,14 @@ class FavoritesFragment : Fragment() {
         setupRecyclerView()
         // 3. Empezar a escuchar los datos
         observeFavorites()
+        // ➕ 4. Cargar banner de AdMob
+        loadBannerAd()
+    }
+
+    // ➕ Función para cargar el banner
+    private fun loadBannerAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adViewBanner.loadAd(adRequest)
     }
 
     private fun setupViewModel() {
@@ -65,15 +83,24 @@ class FavoritesFragment : Fragment() {
     private fun setupRecyclerView() {
         // Configurar el click: Al tocar un favorito, vamos al detalle igual que siempre
         adapter = ImagesAdapter { selectedImage ->
+            // ➕ Incrementar contador y verificar si mostrar intersticial
+            imageClickCount++
 
-            val intent = Intent(requireContext(), ImageDetailActivity::class.java)
+            if (imageClickCount >= CLICKS_BEFORE_INTERSTITIAL) {
+                // Resetear contador
+                imageClickCount = 0
 
-            intent.putExtra("EXTRA_IMAGE_URL", selectedImage.imageUrl)
-
-            // Como ya es favorito, la categoría importa menos, pero podemos pasar algo genérico
-            intent.putExtra("EXTRA_CATEGORY_NAME", "Mis Favoritos")
-
-            startActivity(intent)
+                // Mostrar intersticial y luego navegar
+                activity?.let { activity ->
+                    AdManager.showInterstitialIfReady(activity) {
+                        // Este callback se ejecuta cuando el usuario cierra el anuncio
+                        navigateToImageDetail(selectedImage.imageUrl)
+                    }
+                }
+            } else {
+                // Navegar directamente sin anuncio
+                navigateToImageDetail(selectedImage.imageUrl)
+            }
         }
 
         binding.rvFavorites.apply {
@@ -83,6 +110,14 @@ class FavoritesFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(), dynamicSpanCount)
             adapter = this@FavoritesFragment.adapter // @FavoritesFragment especifica que se usara el adapter asociado al fragment(rvFavorites)
         }
+    }
+
+    // ➕ Función auxiliar para navegar a ImageDetailActivity
+    private fun navigateToImageDetail(imageUrl: String) {
+        val intent = Intent(requireContext(), ImageDetailActivity::class.java)
+        intent.putExtra("EXTRA_IMAGE_URL", imageUrl)
+        intent.putExtra("EXTRA_CATEGORY_NAME", "Mis Favoritos")
+        startActivity(intent)
     }
 
     // --- COMUNICACIÓN: FRAGMENT <-> VIEWMODEL ---

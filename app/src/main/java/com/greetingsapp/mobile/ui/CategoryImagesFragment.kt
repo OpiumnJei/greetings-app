@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
-import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.ads.AdManager
 import com.greetingsapp.mobile.data.model.ThemeModel
 import com.greetingsapp.mobile.data.network.RetrofitClient
@@ -19,15 +18,9 @@ import com.greetingsapp.mobile.ui.ImageDetailActivity
 import com.greetingsapp.mobile.ui.adapter.ImagesAdapter
 import com.greetingsapp.mobile.ui.adapter.ThemesAdapter
 import com.greetingsapp.mobile.ui.utils.calculateDynamicSpanCount
+import com.greetingsapp.mobile.util.ThemeOrderHelper
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek.FRIDAY
-import java.time.DayOfWeek.MONDAY
-import java.time.DayOfWeek.SATURDAY
-import java.time.DayOfWeek.SUNDAY
-import java.time.DayOfWeek.THURSDAY
-import java.time.DayOfWeek.TUESDAY
-import java.time.DayOfWeek.WEDNESDAY
-import java.time.LocalDate
+
 import java.util.concurrent.atomic.AtomicLong
 
 class CategoryImagesFragment : Fragment() {
@@ -216,19 +209,6 @@ class CategoryImagesFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun getThemeNameForToday(): String {
-        val today = LocalDate.now().dayOfWeek
-        return when (today) {
-            MONDAY -> getString(R.string.dia_lunes)
-            TUESDAY -> getString(R.string.dia_martes)
-            WEDNESDAY -> getString(R.string.dia_miercoles)
-            THURSDAY -> getString(R.string.dia_jueves)
-            FRIDAY -> getString(R.string.dia_viernes)
-            SATURDAY, SUNDAY -> getString(R.string.dia_finde)
-            else -> getString(R.string.dia_buenos_dias)
-        }
-    }
-
     // ==========================================
     // 1. CARGA INICIAL (Temas + Imágenes) en la vista de "Saludos"
     // ==========================================
@@ -411,27 +391,12 @@ class CategoryImagesFragment : Fragment() {
     // METODO ENCARGADO DE REORDENAR LA LISTA DE TEMAS EN FUNCION DEL DIA
     // ==================================================================
     private fun reorderThemesWithTodayFirst(themes: List<ThemeModel>): List<ThemeModel> {
-        val todayThemeName = getThemeNameForToday()
-
-        val todayTheme = themes.find { theme ->
-            theme.themeName.equals(todayThemeName, ignoreCase = true)
-        }
-
-        return if (todayTheme != null) {
-            listOf(todayTheme) + themes.filter { theme ->
-                theme.themeId != todayTheme.themeId
-            }
-        } else {
-            themes
-        }
+        return ThemeOrderHelper.reorderThemesWithTodayFirst(themes)
     }
 
-    // ==========================================
-    // 4. SHOW LOADING INTELIGENTE
-    // ==========================================
     /**
      * @param isInitialLoad
-     * true = Oculta todo y muestra shimmer de TEMAS y de IMÁGENES (Carga total)
+     * true = Oculta t0do y muestra shimmer de TEMAS y de IMÁGENES (Carga total)
      * false = Mantiene los temas visibles y solo muestra shimmer de IMÁGENES (Cambio de pestaña)
      */
     private fun showLoading(isInitialLoad: Boolean) {
@@ -525,6 +490,7 @@ class CategoryImagesFragment : Fragment() {
     private fun hideEmptyState() {
         _binding?.emptyState?.emptyStateContainer?.visibility = View.GONE
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

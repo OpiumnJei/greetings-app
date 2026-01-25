@@ -11,6 +11,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.google.android.gms.ads.AdRequest
 import com.greetingsapp.mobile.R
 import com.greetingsapp.mobile.data.local.AppDatabase
 import com.greetingsapp.mobile.databinding.ActivityImageDetailBinding
@@ -70,6 +71,15 @@ class ImageDetailActivity : AppCompatActivity() {
 
         // 5. Le pedimos al ViewModel que verifique en BD si esta foto ya tiene like.
         viewModel.checkFavoriteStatus(currentImageUrl!!)
+
+        // 6. ➕ Cargar banner de AdMob
+        loadBannerAd()
+    }
+
+    // ➕ Función para cargar el banner
+    private fun loadBannerAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adViewBanner.loadAd(adRequest)
     }
 
     // metodo que se encarga de configurar el viewModel

@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdRequest
 import com.greetingsapp.mobile.R
+import com.greetingsapp.mobile.ads.AdManager
 import com.greetingsapp.mobile.data.model.ThemeModel
 import com.greetingsapp.mobile.data.network.RetrofitClient
 import com.greetingsapp.mobile.databinding.FragmentHomeBinding
@@ -22,6 +24,11 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicLong
 
 class HomeFragment : Fragment() {
+
+    // ➕ Número de clics antes de mostrar un intersticial
+    companion object {
+        private const val CLICKS_BEFORE_INTERSTITIAL = 2
+    }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -35,6 +42,9 @@ class HomeFragment : Fragment() {
 
     // ⭐ Renombrado para mayor claridad
     private var homeContentTitle: String = "Inicio"
+
+    // ➕ Contador de clics en imágenes (para intersticiales)
+    private var imageClickCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -55,6 +65,14 @@ class HomeFragment : Fragment() {
         //carga la vista inicial por defecto
         loadHomeContent()
 
+        // ➕ Cargar banner de AdMob
+        loadBannerAd()
+    }
+
+    // ➕ Función para cargar el banner
+    private fun loadBannerAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.adViewBanner.loadAd(adRequest)
     }
 
     //Se configuran los recyclerViews
@@ -83,10 +101,24 @@ class HomeFragment : Fragment() {
         }
 
         imagesAdapter = ImagesAdapter { selectedImage ->
-            val intent = Intent(requireContext(), ImageDetailActivity::class.java)
-            intent.putExtra("EXTRA_IMAGE_URL", selectedImage.imageUrl)
-            intent.putExtra("EXTRA_CATEGORY_NAME", homeContentTitle)
-            startActivity(intent)
+            // ➕ Incrementar contador y verificar si mostrar intersticial
+            imageClickCount++
+
+            if (imageClickCount >= CLICKS_BEFORE_INTERSTITIAL) {
+                // Resetear contador
+                imageClickCount = 0
+
+                // Mostrar intersticial y luego navegar
+                activity?.let { activity ->
+                    AdManager.showInterstitialIfReady(activity) {
+                        // Este callback se ejecuta cuando el usuario cierra el anuncio
+                        navigateToImageDetail(selectedImage.imageUrl)
+                    }
+                }
+            } else {
+                // Navegar directamente sin anuncio
+                navigateToImageDetail(selectedImage.imageUrl)
+            }
         }
 
         binding.recyclerViewImages.apply {
@@ -101,6 +133,14 @@ class HomeFragment : Fragment() {
     private fun clearAdapters() {
         themesAdapter.submitList(emptyList())
         imagesAdapter.submitList(emptyList())
+    }
+
+    // ➕ Función auxiliar para navegar a ImageDetailActivity
+    private fun navigateToImageDetail(imageUrl: String) {
+        val intent = Intent(requireContext(), ImageDetailActivity::class.java)
+        intent.putExtra("EXTRA_IMAGE_URL", imageUrl)
+        intent.putExtra("EXTRA_CATEGORY_NAME", homeContentTitle)
+        startActivity(intent)
     }
 
     fun loadHomeContent() {

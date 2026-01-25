@@ -57,6 +57,8 @@ dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.facebook.shimmer)
+    // ➕ AdMob (Google Mobile Ads)
+    implementation(libs.play.services.ads)
     // ➕ ROOM DATABASE
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

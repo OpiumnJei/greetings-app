@@ -9,7 +9,7 @@ object RetrofitClient {
     // cambiamos el localhost, por la IP de la PC, el objetivo es no tener que depender de abd reverse, y hacerlo
     // T0do de forma inalambrica
     //ip pc: 192.168.0.104
-    private const val BASE_URL = "http://192.168.0.104:8080/"
+    private const val BASE_URL = "http://192.168.0.102:8080/"
 
     val instance: ApiService by lazy {
         Retrofit.Builder()

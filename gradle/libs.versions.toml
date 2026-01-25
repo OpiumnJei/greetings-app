@@ -15,6 +15,7 @@ room = "2.6.1"         # ➕ Agrega esta línea
 lifecycle = "2.6.2"  # ➕ Agrega esta versión (o 2.7.0 / 2.8.x si prefieres)
 desugar_jdk_libs = "2.0.4" # para mantener compatibilidad con todos los dispositivos
 shimmer = "0.5.0" # para las animaciones
+playServicesAds = "23.6.0" # AdMob
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +35,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 # ➕ Agrega esta línea (Es la que contiene viewModelScope):
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 facebook-shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }   # para las animaciones
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }  # AdMob
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -3,18 +3,20 @@ package com.greetingsapp.mobile.ui.utils
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.greetingsapp.mobile.util.SpanCalculator
 
 /**
  * Calcula cuántas columnas caben en la pantalla.
  * @param minWidthDp El ancho mínimo deseado para cada tarjeta (ej. 160dp).
  * @return El número de columnas (mínimo 2).
  *
- *          // Usamos 160dp como ancho base.
- *          // - Celular normal (360dp ancho) -> 360/160 = 2.25 -> 2 Columnas
- *          // - Tablet (600dp ancho) -> 600/160 = 3.75 -> 3 Columnas
- *          // - Tablet Horizontal (900dp ancho) -> 900/160 = 5.6 -> 5 Columnas
+ * Ejemplos con 160dp como ancho base:
+ * - Celular normal (360dp ancho) -> 2 Columnas
+ * - Tablet (600dp ancho) -> 3 Columnas
+ * - Tablet Horizontal (900dp ancho) -> 5 Columnas
  */
 fun Context.calculateDynamicSpanCount(minWidthDp: Int = 160): Int {
+
     // 1. Obtenemos las métricas de la pantalla (pixeles, densidad, etc.)
     val displayMetrics = resources.displayMetrics
 
@@ -22,15 +24,8 @@ fun Context.calculateDynamicSpanCount(minWidthDp: Int = 160): Int {
     // Fórmula: Pixeles / Densidad = DP
     val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
 
-    // 3. Dividimos el ancho total entre el ancho de tu tarjeta
-    val noOfColumns = (screenWidthDp / minWidthDp).toInt()
-
-    // 4. Retornamos el resultado, pero aseguramos que MÍNIMO haya 2 columnas
-    if (noOfColumns >= 2) {
-        return noOfColumns
-    } else {
-        return 2
-    }
+    // Delegamos la lógica pura al objeto utilitario (testeable)
+    return SpanCalculator.calculateSpanCount(screenWidthDp, minWidthDp)
 }
 
 // muestra el teclado

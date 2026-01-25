@@ -16,6 +16,7 @@ lifecycle = "2.6.2"  # ➕ Agrega esta versión (o 2.7.0 / 2.8.x si prefieres)
 desugar_jdk_libs = "2.0.4" # para mantener compatibilidad con todos los dispositivos
 shimmer = "0.5.0" # para las animaciones
 playServicesAds = "23.6.0" # AdMob
+mockk = "1.13.10" # ➕ Para tests unitarios
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 facebook-shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }   # para las animaciones
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }  # AdMob
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }  # ➕ Para tests unitarios
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

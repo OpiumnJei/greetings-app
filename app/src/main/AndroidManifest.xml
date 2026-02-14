@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- permiso para usar el internet del celular -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- visibilidad de paquetes para asegurarnos que siempre el sistema
+    nos provea accesibilidad para abrir las apps, ya el sistema podría mentir y
+     decir que no está instalada aunque sí lo esté, por privacidad.
+
+     OJO:
+     se debe agregar manualmente el packageName por cada app referenciada en nuestro codigo.
+     -->
+    <queries>
+        <package android:name="com.instagram.android" />
+        <package android:name="com.twitter.android" />
+        <package android:name="com.linkedin.android" />
+
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
 
     <application
+        android:name=".GreetingsApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,9 +33,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SaludosDiarios"
+        android:usesCleartextTraffic="false"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.ImageDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +47,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--especificamos formalmente que el archivo provider_paths-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <!-- ✅ AdMob App ID (PRUEBA) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9441113488158692~5533367313" />
     </application>
+
 
 </manifest>

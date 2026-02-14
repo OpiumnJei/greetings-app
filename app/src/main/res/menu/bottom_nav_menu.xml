@@ -4,16 +4,22 @@
     <item
         android:id="@+id/nav_inicio"
         android:icon="@drawable/ic_home"
-        android:title="Inicio" />
+        android:title="@string/nav_inicio" />
 
     <item
         android:id="@+id/nav_buenos_dias"
         android:icon="@drawable/ic_sunny"
-        android:title="Buenos días"/>
+        android:title="@string/nav_saludos"/>
+
+
+  <item
+        android:id="@+id/nav_favoritos"
+        android:icon="@drawable/ic_favorite_border"
+        android:title="@string/nav_favoritos" />
 
     <item
-        android:id="@+id/nav_festividades"
-        android:icon="@drawable/ic_celebration"
-        android:title="Festividades" />
+        android:id="@+id/nav_about"
+        android:icon="@drawable/ic_about"
+        android:title="@string/nav_acerca_de" />
 
 </menu>

@@ -10,21 +10,17 @@ import com.greetingsapp.mobile.data.model.ImageModel
 class ImageViewHolder(private val binding: ItemImageBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(image: ImageModel, onImageSelected: (ImageModel) -> Unit)//onImageSelected recibe un objeto del tipo ImageModel
+    fun bind(image: ImageModel, onImageSelected: (ImageModel) -> Unit)
     {
-        // url de la imagen
-        val imageUrl = image.imageUrl
-
         // 1. Cargar la imagen usando Coil
-        // La extensión .load viene de la librería Coil
-        binding.imageViewItem.load(imageUrl) {
-            crossfade(true) // Efecto de desvanecimiento suave al aparecer
-            placeholder(R.drawable.ic_launcher_background) // Muestra esto mientras carga
-            error(R.drawable.ic_broken_image) // Muestra esto si falla,  Icono específico para error
+        binding.imageViewItem.load(image.imageUrl) {
+            crossfade(true)
+            placeholder(R.drawable.ic_launcher_background)
+            error(R.drawable.ic_broken_image)
         }
 
-        // al hacer click sobre una imagen se llama a este metodo
-        binding.root.setOnClickListener { //binding.root - indica que estamos accediendo a TOD0 el componente padre(CardView)
+        // Al hacer click sobre una imagen se llama a este método
+        binding.root.setOnClickListener {
             onImageSelected(image)
         }
     }

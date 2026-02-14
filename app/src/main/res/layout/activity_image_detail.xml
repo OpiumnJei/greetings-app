@@ -30,13 +30,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--    id prod: ca-app-pub-9441113488158692/1448273332-->
+<!--    id prueba: ca-app-pub-3940256099942544/6300978111-->
     <!-- ➕ Banner de AdMob -->
     <com.google.android.gms.ads.AdView
         android:id="@+id/adViewBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:adUnitId="ca-app-pub-9441113488158692/1448273332"
         app:layout_constraintBottom_toTopOf="@+id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

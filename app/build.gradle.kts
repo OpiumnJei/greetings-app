@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.greetingsapp.mobile"
-        minSdk = 21
+        minSdk = 26  // Android 8.0 - Certificados SSL modernos soportados
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -19,9 +19,21 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // 🔐 Configuración de firma para release
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:/Users/Jerlinson/Desktop/keystores/greetingsapp.jks")
+            storePassword = "jg30111995"
+            keyAlias = "greetings-release"
+            keyPassword = "jg30111995"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true // ✅ Ofuscar y reducir código
+            isShrinkResources = true // ✅ Eliminar recursos no usados
+            signingConfig = signingConfigs.getByName("release") // 🔐 Usar firma release
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -48,12 +60,14 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // Coil (Para cargar las imágenes en el Adapter más adelante)
+    // Coil (Para cargar las imágenes)
     implementation("io.coil-kt:coil:2.6.0")
-    // para las corrutinas
+
+    // Corrutinas
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    // para que funcione el desugaring, para mantener compatibilidad con todos los dispositivos
+
+    // Desugaring para compatibilidad
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.facebook.shimmer)

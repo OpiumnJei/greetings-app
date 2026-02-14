@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
 
     // ➕ Número de clics antes de mostrar un intersticial
     companion object {
-        private const val CLICKS_BEFORE_INTERSTITIAL = 2
+        private const val CLICKS_BEFORE_INTERSTITIAL = 3
     }
 
     private var _binding: FragmentHomeBinding? = null
@@ -272,13 +272,10 @@ class HomeFragment : Fragment() {
                     showError(message = "Error al cargar inicio", onRetry = { loadHomeContent() })
                 }
             } catch (e: java.io.IOException) {
-//                Log.e("HomeFragment", "❌ Sin conexión: ${e.message}", e)
-                //valalidar si el usuario aun esta en la misma ventana, si esta se muestra el error, si no esta, no hacer nada
                 if (navId == currentNavigationId) {
                     showError(message = "Sin conexión a internet", onRetry = { loadHomeContent() })
                 }
             } catch (e: Exception) {
-//                Log.e("HomeFragment", "Error: ${e.message}", e)
                 if (navId == currentNavigationId) {
                     showError(message = "Error inesperado", onRetry = { loadHomeContent() })
                 }

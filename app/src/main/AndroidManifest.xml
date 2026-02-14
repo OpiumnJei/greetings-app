@@ -33,7 +33,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SaludosDiarios"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="false"
         tools:targetApi="31">
         <activity
             android:name=".ui.ImageDetailActivity"
@@ -59,10 +59,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <!-- ➕ AdMob App ID (TEST ID - ¡CAMBIAR POR EL REAL ANTES DE PUBLICAR!) -->
+        <!-- ✅ AdMob App ID (PRUEBA) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-9441113488158692~5533367313" />
     </application>
 
 

@@ -32,7 +32,7 @@ class CategoryImagesFragment : Fragment() {
         private const val ARG_SHOW_THEMES = "show_themes"
 
         // ➕ Número de clics antes de mostrar un intersticial
-        private const val CLICKS_BEFORE_INTERSTITIAL = 2
+        private const val CLICKS_BEFORE_INTERSTITIAL = 3
 
         // FACTORY METHODS
         /**

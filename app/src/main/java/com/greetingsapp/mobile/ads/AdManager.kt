@@ -22,9 +22,11 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 object AdManager {
 
     private const val TAG = "AdManager"
+//     ⚠️ TEST UNIT ID - ¡Cambiar por    el real antes de publicar!
+//    private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
 
-    // ⚠️ TEST UNIT ID - ¡Cambiar por    el real antes de publicar!
-    private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
+//    // ✅ ID de producción - Intersticial
+    private const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-9441113488158692/9362397699"
 
     // En esta variable guardamos el anuncio descargado
     // El anuncio intersticial cargado (null si no está listo)

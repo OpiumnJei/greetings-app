@@ -118,14 +118,11 @@ class ImageDetailActivity : AppCompatActivity() {
     }
 
     private fun setupImageLoading() {
-        // Usamos la URL recibida
         binding.ivDetail.load(currentImageUrl) {
-            crossfade(true) // Efecto visual suave
-            allowHardware(false) //nos permite leer sus píxeles para luego hacer una copia y poder compartirla
+            crossfade(true)
+            allowHardware(false) // Permite leer píxeles para compartir
             placeholder(android.R.drawable.ic_menu_gallery)
             error(android.R.drawable.stat_notify_error)
-
-            // Listener para ocultar ProgressBar (asumiendo que está en el XML nuevo)
             listener(
                 onStart = { binding.progressBar.visibility = android.view.View.VISIBLE },
                 onSuccess = { _, _ -> binding.progressBar.visibility = android.view.View.GONE },

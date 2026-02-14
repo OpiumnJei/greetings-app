@@ -54,7 +54,7 @@ class AboutFragment : Fragment() {
             // 1. Email de Contacto
             btnContact.setOnClickListener {
                 sendEmail(
-                    address = "soporte@saludosdiarios.app",
+                    address = "jerlinsongonzalez@gmail.com",
                     subject = getString(R.string.email_subject_contact)
                 )
             }
@@ -70,15 +70,15 @@ class AboutFragment : Fragment() {
                 """.trimIndent()
 
                 sendEmail(
-                    address = "bugs@saludosdiarios.app",
+                    address = "jerlinsongonzalez@gmail.com",
                     subject = getString(R.string.email_subject_bug),
                     body = "Describe el problema aquí:\n$deviceInfo"
                 )
             }
 
             // 3. URLs Simples
-            btnDonate.setOnClickListener { openUrl("https://paypal.me/tuusuario") }
-            btnPrivacy.setOnClickListener { openUrl("https://saludosdiarios.app/privacidad") }
+            btnDonate.setOnClickListener { openUrl("https://paypal.me/JerlinsonGonzalez") }
+            btnPrivacy.setOnClickListener { openUrl("https://doc-hosting.flycricket.io/saludos-diarios-privacy-policy/ab4a8cdc-fa44-41e0-8289-3d7fb03c162b/privacy") }
 
             // 4. Redes Sociales (Lógica inteligente)
 

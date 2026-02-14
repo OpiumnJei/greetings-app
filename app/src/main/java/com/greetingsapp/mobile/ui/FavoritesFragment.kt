@@ -24,7 +24,7 @@ class FavoritesFragment : Fragment() {
 
     // ➕ Número de clics antes de mostrar un intersticial
     companion object {
-        private const val CLICKS_BEFORE_INTERSTITIAL = 2
+        private const val CLICKS_BEFORE_INTERSTITIAL = 3
     }
 
     // _binding: Referencia a los botones y textos del XML.

@@ -6,10 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 // Objeto singleton para centralizar la configuración y creación del cliente Retrofit.
 object RetrofitClient {
 
-    // cambiamos el localhost, por la IP de la PC, el objetivo es no tener que depender de abd reverse, y hacerlo
-    // T0do de forma inalambrica
-    //ip pc: 192.168.0.104
-    private const val BASE_URL = "http://192.168.0.102:8080/"
+    // ✅ URL de producción (HTTPS)
+    private const val BASE_URL = "https://images-api-1ob7.onrender.com/"
 
     val instance: ApiService by lazy {
         Retrofit.Builder()

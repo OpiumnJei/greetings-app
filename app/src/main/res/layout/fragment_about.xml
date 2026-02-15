@@ -161,6 +161,17 @@
             android:text="@string/about_footer"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
+
+        <!-- Créditos de imágenes Freepik -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:text="Algunas imágenes de esta aplicación fueron diseñadas por Freepik."
+            android:textColor="#6F6F6F"
+            android:textSize="10sp"
+            android:textStyle="normal" />
     </LinearLayout>
 </ScrollView>
 

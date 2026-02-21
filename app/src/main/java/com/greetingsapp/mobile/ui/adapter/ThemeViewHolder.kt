@@ -13,7 +13,7 @@ class ThemeViewHolder(private val binding: ItemThemeBinding) : RecyclerView.View
         // ⭐ LÓGICA VISUAL: Cambiar color según selección
         if (isSelected) {
             // Ejemplo: Fondo Morado, Texto Blanco
-            binding.cardTheme.setCardBackgroundColor(binding.root.context.getColor(R.color.purple_500))
+            binding.cardTheme.setCardBackgroundColor(binding.root.context.getColor(R.color.orange))
             binding.textThemeName.setTextColor(binding.root.context.getColor(android.R.color.white))
         } else {
             // Estado Normal: Fondo Blanco, Texto Negro

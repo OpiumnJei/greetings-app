@@ -87,7 +87,7 @@
             android:text="@string/about_btn_cafe"
             app:icon="@drawable/ic_favorite_filled"
             app:iconSize="20dp"
-            app:backgroundTint="@color/purple_500" />
+            app:backgroundTint="@color/orange_background" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLinkedin"
